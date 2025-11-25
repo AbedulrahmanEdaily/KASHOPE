@@ -1,4 +1,8 @@
+using KASHOPE.BLL.Services.Classes;
+using KASHOPE.BLL.Services.Interfaces;
 using KASHOPE.DAL.DATA;
+using KASHOPE.DAL.Repository.Classes;
+using KASHOPE.DAL.Repository.Interfaces;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -39,6 +43,9 @@ namespace KASHOPE.PL
             });
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+            builder.Services.AddScoped<ICategoryService, CategoryService>();
+
             var app = builder.Build();
             app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
             // Configure the HTTP request pipeline.

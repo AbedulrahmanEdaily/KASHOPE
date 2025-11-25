@@ -8,34 +8,55 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Microsoft.EntityFrameworkCore;
-
+using KASHOPE.BLL.Services.Classes;
+using KASHOPE.BLL.Services.Interfaces;
 namespace KASHOPE.PL.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class CategoriesController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ICategoryService _categoryService;
         private readonly IStringLocalizer<SharedResource> _localizer;
 
-        public CategoriesController(ApplicationDbContext context, IStringLocalizer<SharedResource> localizer)
+        public CategoriesController(ICategoryService categoryService, IStringLocalizer<SharedResource> localizer)
         {
-            _context = context;
+            _categoryService = categoryService;
             _localizer = localizer;
         }
         [HttpGet("")]
-        public IActionResult index()
+        public IActionResult Index()
         {
-            var categories = _context.Categories.Include(c => c.CategoryTranslations).ToList();
-            var categoriesDTO = categories.Adapt<List<CategoryResponse>>();
-            return Ok(new { message = _localizer["Success"].Value, categories = categoriesDTO });
+            var categories = _categoryService.GetAllCategories();
+            return Ok(new { message = _localizer["Success"].Value, categories });
+        }
+        [HttpGet("{id}")]
+        public IActionResult GetById(int id)
+        {
+            var category = _categoryService.GetCategoryById(id);
+            return Ok(new { message = _localizer["Success"].Value, category });
         }
         [HttpPost("")]
-        public IActionResult create(CategoryRequest request)
+        public IActionResult Create(CategoryRequest request)
         {
-            var category = request.Adapt<Category>();
-            _context.Categories.Add(category);
-            _context.SaveChanges();
+            _categoryService.CreateCategory(request);
+            return Ok(new { message = _localizer["Success"].Value });
+        }
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            _categoryService.DeleteCategory(id);
+            return Ok(new { message = _localizer["Success"].Value });
+        }
+        [HttpPut("{id}")]
+        public IActionResult Update(int id, CategoryRequest request)
+        {
+            var existingCategory = _categoryService.GetCategoryById(id);
+            if (existingCategory == null)
+            {
+                return NotFound(new { message = _localizer["CategoryNotFound"].Value });
+            }
+            _categoryService.UpdateCategory(id, request);
             return Ok(new { message = _localizer["Success"].Value });
         }
     }

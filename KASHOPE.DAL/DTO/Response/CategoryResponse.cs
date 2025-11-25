@@ -10,6 +10,7 @@ namespace KASHOPE.DAL.DTO.Response
     {
         public int Id { get; set; }
         public int Status { get; set; }
+        public DateTime CreatedAt { get; set; }
         public List<CategoryTranslationResponse> CategoryTranslations { get; set; } = new();
     }
 }
