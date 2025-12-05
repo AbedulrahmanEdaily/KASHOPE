@@ -1,19 +1,18 @@
-﻿using KASHOPE.DAL.DATA;
-using KASHOPE.DAL.Models;
+﻿using KASHOPE.BLL.Services.Interfaces;
 using KASHOPE.DAL.DTO.Request;
-using KASHOPE.DAL.DTO.Response;
 using KASHOPE.PL.Resources;
-using Mapster;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
-using Microsoft.EntityFrameworkCore;
-using KASHOPE.BLL.Services.Classes;
-using KASHOPE.BLL.Services.Interfaces;
-namespace KASHOPE.PL.Controllers
+
+namespace KASHOPE.PL.Area.Admin.Controllers
 {
-    [Route("api/[controller]")]
+
+    [Area("Admin")]
+    [Route("api/[Area]/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public class CategoriesController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
