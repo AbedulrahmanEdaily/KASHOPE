@@ -25,21 +25,51 @@ namespace KASHOPE.PL.Area.Identity
         [HttpPost("Register")]
         public async Task<IActionResult> Register(RegisterRequest request)
         {
-            var result = await _authenticationService.RegisterAsync(request); 
-            if(!result.Success)
+            var result = await _authenticationService.RegisterAsync(request);
+            if (!result.Success)
             {
                 return BadRequest(result);
-            }   
+            }
             return Ok(result);
         }
         [HttpPost("Login")]
         public async Task<IActionResult> Login(LoginRequest request)
         {
-            var result = await _authenticationService.LoginAsync(request); 
-            if(!result.Success)
+            var result = await _authenticationService.LoginAsync(request);
+            if (!result.Success)
             {
                 return BadRequest(result);
-            }   
+            }
+            return Ok(result);
+        }
+        [HttpGet("ConfirmEmail")]
+        public async Task<IActionResult> ConfirmEmail(string token, string userId)
+        {
+            var result = await _authenticationService.ConfirmEmailAsync(token, userId);
+            if (!result)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
+        [HttpPost("ResetPassword")]
+        public async Task<IActionResult> ResetPassword(ResetPasswordRequest request)
+        {
+            var result = await _authenticationService.ResetPasswordAsync(request);
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
+        [HttpPut("ChangePassword")]
+        public async Task<IActionResult> ChangePassword(ChangePasswordRequest request)
+        {
+            var result = await _authenticationService.ChangePasswordAsync(request);
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
             return Ok(result);
         }
     }

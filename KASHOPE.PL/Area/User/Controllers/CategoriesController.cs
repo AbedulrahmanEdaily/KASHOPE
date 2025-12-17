@@ -16,7 +16,7 @@ namespace KASHOPE.PL.Area.User.Controllers
     [Area("User")]
     [Route("api/[Area]/[controller]")]
     [ApiController]
-    [Authorize(Roles ="User")]
+    //[Authorize(Roles ="User")]
     public class CategoriesController : ControllerBase
     {
         private readonly ICategoryService _categoryService;

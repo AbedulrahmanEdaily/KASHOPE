@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace KASHOPE.DAL.DTO.Response
 {
-    public class RegisterResponse: BaseResponse
+    public class BaseResponse
     {
-
+        public bool Success { get; set; }
+        public string Message { get; set; }
     }
 }

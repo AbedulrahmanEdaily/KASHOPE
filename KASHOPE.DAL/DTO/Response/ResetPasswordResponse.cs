@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace KASHOPE.DAL.DTO.Response
 {
-    public class RegisterResponse: BaseResponse
+    public class ResetPasswordResponse: BaseResponse
     {
-
     }
 }
