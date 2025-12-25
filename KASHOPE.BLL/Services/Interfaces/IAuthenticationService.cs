@@ -10,10 +10,11 @@ namespace KASHOPE.BLL.Services.Interfaces
 {
     public interface IAuthenticationService
     {
-        Task<RegisterResponse> RegisterAsync(RegisterRequest registerRequest);
-        Task<LoginResponse> LoginAsync(LoginRequest loginRequest);
+        Task<BaseResponse> RegisterAsync(RegisterRequest registerRequest);
+        Task<BaseResponse> LoginAsync(LoginRequest loginRequest);
         Task<bool> ConfirmEmailAsync(string token,string userId);
-        Task<ResetPasswordResponse> ResetPasswordAsync(ResetPasswordRequest request);
-        Task<ResetPasswordResponse> ChangePasswordAsync(ChangePasswordRequest request);
+        Task<BaseResponse> ResetPasswordAsync(ResetPasswordRequest request);
+        Task<BaseResponse> ChangePasswordAsync(ChangePasswordRequest request);
+
     }
 }

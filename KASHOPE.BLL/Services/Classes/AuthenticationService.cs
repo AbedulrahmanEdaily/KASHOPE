@@ -29,14 +29,14 @@ namespace KASHOPE.BLL.Services.Classes
             _configuration = configuration;
             _signInManager = signInManager;
         }
-        public async Task<LoginResponse> LoginAsync(LoginRequest loginRequest)
+        public async Task<BaseResponse> LoginAsync(LoginRequest loginRequest)
         {
             try
             {
                 var user = await _userManager.FindByEmailAsync(loginRequest.Email);
                 if (user is null)
                 {
-                    return new LoginResponse
+                    return new BaseResponse
                     {
                         Success = false,
                         Message = "Invalid Email"
@@ -44,7 +44,7 @@ namespace KASHOPE.BLL.Services.Classes
                 }
                 else if (await _userManager.IsLockedOutAsync(user))
                 {
-                    return new LoginResponse
+                    return new BaseResponse
                     {
                         Success = false,
                         Message = "User is locked out,try again later"
@@ -53,21 +53,21 @@ namespace KASHOPE.BLL.Services.Classes
                 var password = await _signInManager.CheckPasswordSignInAsync(user, loginRequest.Password,true);
                 if(password.IsLockedOut)
                 {
-                    return new LoginResponse
+                    return new BaseResponse
                     {
                         Success = false,
                         Message = "User is locked out,try again later"
                     };
                 }else if(password.IsNotAllowed)
                 {
-                    return new LoginResponse
+                    return new BaseResponse
                     {
                         Success = false,
                         Message = "Email is not confirmed"
                     };
                 } else if (!password.Succeeded)
                 {
-                    return new LoginResponse
+                    return new BaseResponse
                     {
                         Success = false,
                         Message = "Invalid Password"
@@ -83,7 +83,7 @@ namespace KASHOPE.BLL.Services.Classes
             }
             catch (Exception ex)
             {
-                return new LoginResponse
+                return new BaseResponse
                 {
                     Success = false,
                     Message = "An error occurred during login: " + ex.Message
@@ -91,7 +91,7 @@ namespace KASHOPE.BLL.Services.Classes
             }
         }
 
-        public async Task<RegisterResponse> RegisterAsync(RegisterRequest registerRequest)
+        public async Task<BaseResponse> RegisterAsync(RegisterRequest registerRequest)
         {
             try
             {
@@ -99,7 +99,7 @@ namespace KASHOPE.BLL.Services.Classes
                 var result = await _userManager.CreateAsync(user, registerRequest.Password);
                 if (!result.Succeeded)
                 {
-                    return new RegisterResponse
+                    return new BaseResponse
                     {
                         Success = false,
                         Message = "User registration failed: " + string.Join(", ", result.Errors.Select(e => e.Description))
@@ -110,7 +110,7 @@ namespace KASHOPE.BLL.Services.Classes
                 token = Uri.EscapeDataString(token);
                 var url = $"https://localhost:7026/api/auth/account/ConfirmEmail?token={token}&userId={user.Id}"; ;
                 await _emailSender.SendEmailAsync(user.Email, "Welcome to KASHOPE", $"<p>Thank you for registering {user.FullName} Please Confirm Your Email by</p>"+$"<a href='{url}'>Click Here</a>");
-                return new RegisterResponse
+                return new BaseResponse
                 {
                     Success = true,
                     Message = "User registered successfully"
@@ -118,7 +118,7 @@ namespace KASHOPE.BLL.Services.Classes
             }
             catch(Exception ex)
             {
-                return new RegisterResponse
+                return new BaseResponse
                 {
                     Success = false,
                     Message = "An error occurred during registration: " + ex.Message
@@ -137,17 +137,14 @@ namespace KASHOPE.BLL.Services.Classes
         }
         private async Task<string> GenerateJwtToken(ApplicationUser user)
         {
+            var roles = await _userManager.GetRolesAsync(user);
             var Claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Email,user.Email),
                 new Claim(ClaimTypes.Name,user.UserName),
                 new Claim(ClaimTypes.NameIdentifier,user.Id),
+                new Claim(ClaimTypes.Role,string.Join(',',roles))
             };
-            var Roles = await _userManager.GetRolesAsync(user);
-            foreach (var role in Roles)
-            {
-                Claims.Add(new Claim(ClaimTypes.Role, role));
-            }
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
@@ -155,18 +152,18 @@ namespace KASHOPE.BLL.Services.Classes
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
                 claims: Claims,
-                expires: DateTime.UtcNow.AddMinutes(30),
+                expires: DateTime.UtcNow.AddDays(30),
                 signingCredentials: creds);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public async Task<ResetPasswordResponse> ResetPasswordAsync(ResetPasswordRequest request)
+        public async Task<BaseResponse> ResetPasswordAsync(ResetPasswordRequest request)
         {
             var user = await  _userManager.FindByEmailAsync(request.Email);
             if (user is null)
             {
-                return new ResetPasswordResponse
+                return new BaseResponse
                 {
                     Success = false,
                     Message = "Invalid Email"
@@ -178,19 +175,19 @@ namespace KASHOPE.BLL.Services.Classes
 
             await _userManager.UpdateAsync(user);
             await _emailSender.SendEmailAsync(user.Email, "Reset Password Code", $"<p>Your password reset code is: <strong>{code}</strong></p><p>This code will expire in 5 minutes.</p>");
-            return new ResetPasswordResponse
+            return new BaseResponse
             {
                 Success = true,
                 Message = "Reset password code sent to email"
             };
         }
 
-        public async Task<ResetPasswordResponse> ChangePasswordAsync(ChangePasswordRequest request)
+        public async Task<BaseResponse> ChangePasswordAsync(ChangePasswordRequest request)
         {
             var user = await _userManager.FindByEmailAsync(request.Email);
             if (user is null)
             {
-                return new ResetPasswordResponse
+                return new BaseResponse
                 {
                     Success = false,
                     Message = "Invalid Email"
@@ -198,7 +195,7 @@ namespace KASHOPE.BLL.Services.Classes
             }
             else if (user.CodeResetPassword != request.CodeResetPassword || user.CodeResetPasswordExpiration < DateTime.UtcNow)
             {
-                return new ResetPasswordResponse
+                return new BaseResponse
                 {
                     Success = false,
                     Message = "Invalid or expired reset code"
@@ -208,7 +205,7 @@ namespace KASHOPE.BLL.Services.Classes
             var result = await _userManager.ResetPasswordAsync(user, token, request.NewPassword);
             if (!result.Succeeded)
             {
-                return new ResetPasswordResponse
+                return new BaseResponse
                 {
                     Success = false,
                     Message = "Password reset failed: " + string.Join(", ", result.Errors.Select(e => e.Description))
@@ -218,7 +215,7 @@ namespace KASHOPE.BLL.Services.Classes
             user.CodeResetPasswordExpiration = null;
             await _userManager.UpdateAsync(user);
             await _emailSender.SendEmailAsync(user.Email, "Password Changed", "<p>Your password is Changed</p>");
-            return new ResetPasswordResponse
+            return new BaseResponse
             {
                 Success = true,
                 Message = "Password changed successfully"

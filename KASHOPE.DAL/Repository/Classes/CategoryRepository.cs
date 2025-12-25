@@ -19,42 +19,34 @@ namespace KASHOPE.DAL.Repository.Classes
             _context = context;
         }
 
-        public Category Create(Category Request)
+        public async Task<Category> CreateAsync(Category Request)
         {
-            _context.Add(Request);
-            _context.SaveChanges();
+            await _context.AddAsync(Request);
+            await _context.SaveChangesAsync();
             return Request;
         }
 
-        public void Delete(int id)
+        public async Task DeleteAsync(Category category)
         {
-            var category = _context.Categories.Find(id);
-            if (category != null)
-            {
-                _context.Categories.Remove(category); 
-                _context.SaveChanges();              
-            }
+            _context.Categories.Remove(category); 
+            await _context.SaveChangesAsync();              
         }
-        public List<Category> GetAll()
+
+        public async Task<Category?> FindbyIdAsync(int id)
         {
-            var categories = _context.Categories.Include(c=>c.CategoryTranslations).ToList();
+            return await _context.Categories.Include(c=>c.CategoryTranslations).FirstOrDefaultAsync(c=>c.Id == id);
+        }
+
+        public async Task<List<Category>> GetAllAsync()
+        {
+            var categories =  await _context.Categories.Include(c=>c.CategoryTranslations).Include(c=>c.User).ToListAsync();
             return categories;
         }
 
-        public Category GetById(int id)
+        public async Task UpdateAsync( Category category)
         {
-            var category = _context.Categories.Include(c => c.CategoryTranslations).FirstOrDefault(c => c.Id == id);
-            return category;
-        }
-
-        public void Update(int id, Category request)
-        {
-            var category = _context.Categories.Find(id);
-            
-            
-                category.CategoryTranslations = request.CategoryTranslations;
-                category.Status = request.Status;
-                _context.SaveChanges();
+            _context.Categories.Update(category);
+            await _context.SaveChangesAsync();
             
         }
     }

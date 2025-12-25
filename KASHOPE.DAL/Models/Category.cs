@@ -9,5 +9,6 @@ namespace KASHOPE.DAL.Models
     public class Category : BaseModel
     {
         public List<CategoryTranslation>? CategoryTranslations { get; set; }
+        public List<Product> Products { get; set; }
     }
 }

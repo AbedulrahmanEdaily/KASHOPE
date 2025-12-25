@@ -23,7 +23,7 @@ namespace KASHOPE.PL.Area.Identity
             _authenticationService = authenticationService;
         }
         [HttpPost("Register")]
-        public async Task<IActionResult> Register(RegisterRequest request)
+        public async Task<IActionResult> Register([FromBody]RegisterRequest request)
         {
             var result = await _authenticationService.RegisterAsync(request);
             if (!result.Success)
@@ -33,7 +33,7 @@ namespace KASHOPE.PL.Area.Identity
             return Ok(result);
         }
         [HttpPost("Login")]
-        public async Task<IActionResult> Login(LoginRequest request)
+        public async Task<IActionResult> Login([FromBody]LoginRequest request)
         {
             var result = await _authenticationService.LoginAsync(request);
             if (!result.Success)
@@ -53,7 +53,7 @@ namespace KASHOPE.PL.Area.Identity
             return Ok(result);
         }
         [HttpPost("ResetPassword")]
-        public async Task<IActionResult> ResetPassword(ResetPasswordRequest request)
+        public async Task<IActionResult> ResetPassword([FromBody]ResetPasswordRequest request)
         {
             var result = await _authenticationService.ResetPasswordAsync(request);
             if (!result.Success)
@@ -63,7 +63,7 @@ namespace KASHOPE.PL.Area.Identity
             return Ok(result);
         }
         [HttpPut("ChangePassword")]
-        public async Task<IActionResult> ChangePassword(ChangePasswordRequest request)
+        public async Task<IActionResult> ChangePassword([FromBody]ChangePasswordRequest request)
         {
             var result = await _authenticationService.ChangePasswordAsync(request);
             if (!result.Success)

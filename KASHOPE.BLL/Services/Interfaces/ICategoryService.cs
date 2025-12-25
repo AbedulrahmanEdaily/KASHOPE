@@ -11,10 +11,12 @@ namespace KASHOPE.BLL.Services.Interfaces
 {
     public interface ICategoryService
     {
-        public CategoryResponse CreateCategory(CategoryRequest request);
-        public List<CategoryResponse> GetAllCategories();
-        public void DeleteCategory(int id);
-        public CategoryResponse GetCategoryById(int id);
-        public void UpdateCategory(int id , CategoryRequest request);
+        public Task<CategoryResponse> CreateCategoryAsync(CategoryRequest request);
+        public Task<List<CategoryResponse>> GetAllCategoriesAsync();
+        public Task<List<CategoryUserResponse>> GetAllCategoriesAsync(string lang);
+        public Task<BaseResponse> DeleteCategoryAsync(int id);
+        public Task<CategoryResponse> GetCategoryByIdAsync(int id);
+        public Task<BaseResponse> UpdateCategoryAsync(int id , CategoryRequest request);
+        public Task<BaseResponse> ToggleStatusAsync(int id);
     }
 }

@@ -24,39 +24,70 @@ namespace KASHOPE.PL.Area.Admin.Controllers
             _localizer = localizer;
         }
         [HttpGet("")]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var categories = _categoryService.GetAllCategories();
+            var categories = await _categoryService.GetAllCategoriesAsync();
             return Ok(new { message = _localizer["Success"].Value, categories });
         }
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        public async Task<IActionResult> GetById([FromRoute] int id)
         {
-            var category = _categoryService.GetCategoryById(id);
-            return Ok(new { message = _localizer["Success"].Value, category });
-        }
-        [HttpPost("")]
-        public IActionResult Create(CategoryRequest request)
-        {
-            _categoryService.CreateCategory(request);
-            return Ok(new { message = _localizer["Success"].Value });
-        }
-        [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
-        {
-            _categoryService.DeleteCategory(id);
-            return Ok(new { message = _localizer["Success"].Value });
-        }
-        [HttpPut("{id}")]
-        public IActionResult Update(int id, CategoryRequest request)
-        {
-            var existingCategory = _categoryService.GetCategoryById(id);
-            if (existingCategory == null)
+            var category = await _categoryService.GetCategoryByIdAsync(id);
+            if(category is null)
             {
                 return NotFound(new { message = _localizer["CategoryNotFound"].Value });
             }
-            _categoryService.UpdateCategory(id, request);
+            return Ok(new { message = _localizer["Success"].Value, category });
+        }
+        [HttpPost("")]
+        public async Task<IActionResult> Create([FromBody]CategoryRequest request)
+        {
+            await _categoryService.CreateCategoryAsync(request);
             return Ok(new { message = _localizer["Success"].Value });
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete([FromRoute]int id)
+        {
+            var result = await _categoryService.DeleteCategoryAsync(id);
+            if (!result.Success)
+            {
+                if(result.Message.Contains("Not Found"))
+                {
+                    return NotFound(result);
+                }
+                return BadRequest(result);
+            }
+            return Ok(new { message = _localizer["Success"].Value });
+        }
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> Update([FromRoute]int id,[FromBody] CategoryRequest request)
+        {
+
+            var result = await _categoryService.UpdateCategoryAsync(id,request);
+            if (!result.Success)
+            {
+                if (result.Message.Contains("Not Found"))
+                {
+                    return NotFound(result);
+                }
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
+        [HttpPatch("ToggleStatus/{id}")]
+        public async Task<IActionResult> ToggleStatus([FromRoute] int id)
+        {
+
+            var result = await _categoryService.ToggleStatusAsync(id);
+            if (!result.Success)
+            {
+                if (result.Message.Contains("Not Found"))
+                {
+                    return NotFound(result);
+                }
+                return BadRequest(result);
+            }
+            return Ok(result);
         }
     }
 }

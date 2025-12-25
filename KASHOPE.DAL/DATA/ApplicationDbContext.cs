@@ -1,10 +1,12 @@
 ﻿using KASHOPE.DAL.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,11 +14,13 @@ namespace KASHOPE.DAL.DATA
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
         public DbSet<Category> Categories { get; set; }
         public DbSet<CategoryTranslation> CategoryTranslations { get; set; }
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options,IHttpContextAccessor httpContextAccessor) : base(options)
         {
-
+            _httpContextAccessor = httpContextAccessor;
         }
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -24,12 +28,50 @@ namespace KASHOPE.DAL.DATA
             builder.Entity<ApplicationUser>().ToTable("Users");
             builder.Entity<IdentityRole>().ToTable("Roles");
             builder.Entity<IdentityUserRole<string>>().ToTable("UserRoles");
-
+            builder.Entity<Category>().HasOne<ApplicationUser>(c=>c.User).WithMany().HasForeignKey(c=>c.CreatedBy).OnDelete(DeleteBehavior.NoAction);
             builder.Ignore<IdentityUserClaim<string>>();
             builder.Ignore<IdentityUserLogin<string>>();
             builder.Ignore<IdentityUserToken<string>>();
             builder.Ignore<IdentityRoleClaim<string>>();
 
+        }
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            var entries = ChangeTracker.Entries<BaseModel>();
+            var currentUserId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            foreach (var entityEntry in entries)
+            {
+                if (entityEntry.State == EntityState.Added)
+                {
+                    entityEntry.Property(x => x.CreatedBy).CurrentValue = currentUserId;
+                    entityEntry.Property(x => x.CreatedAt).CurrentValue = DateTime.UtcNow;
+                }
+                else if (entityEntry.State == EntityState.Modified)
+                {
+                    entityEntry.Property(x => x.UpdatedBy).CurrentValue = currentUserId;
+                    entityEntry.Property(x => x.UpdatedAt).CurrentValue = DateTime.UtcNow;
+                }
+            }
+            return base.SaveChangesAsync(cancellationToken);
+        }
+        public override int SaveChanges()
+        {
+            var entries = ChangeTracker.Entries<BaseModel>();
+            var currentUserId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            foreach (var entityEntry in entries)
+            {
+                if (entityEntry.State == EntityState.Added)
+                {
+                    entityEntry.Property(x => x.CreatedBy).CurrentValue = currentUserId;
+                    entityEntry.Property(x => x.CreatedAt).CurrentValue = DateTime.UtcNow;
+                }
+                else if (entityEntry.State == EntityState.Modified)
+                {
+                    entityEntry.Property(x => x.UpdatedBy).CurrentValue = currentUserId;
+                    entityEntry.Property(x => x.UpdatedAt).CurrentValue = DateTime.UtcNow;
+                }
+            }
+            return base.SaveChanges();
         }
     }
 }

@@ -9,11 +9,10 @@ namespace KASHOPE.DAL.Repository.Interfaces
 {
     public interface ICategoryRepository
     {
-        List<Category> GetAll();
-        Category Create(Category Request);
-        void Delete(int id);
-        public Category GetById(int id);
-
-        public void Update(int id, Category category);
+        Task<List<Category>> GetAllAsync();
+        Task<Category> CreateAsync(Category Request);
+        Task DeleteAsync(Category category);
+        Task UpdateAsync(Category category);
+        Task <Category> FindbyIdAsync(int id);
     }
 }

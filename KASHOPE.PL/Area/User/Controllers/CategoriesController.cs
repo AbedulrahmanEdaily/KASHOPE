@@ -16,7 +16,7 @@ namespace KASHOPE.PL.Area.User.Controllers
     [Area("User")]
     [Route("api/[Area]/[controller]")]
     [ApiController]
-    //[Authorize(Roles ="User")]
+    [Authorize(Roles ="User")]
     public class CategoriesController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
@@ -28,15 +28,19 @@ namespace KASHOPE.PL.Area.User.Controllers
             _localizer = localizer;
         }
         [HttpGet("")]
-        public IActionResult Index()
+        public async Task<IActionResult> Index([FromQuery] string lang)
         {
-            var categories = _categoryService.GetAllCategories();
+            var categories = await _categoryService.GetAllCategoriesAsync(lang);
             return Ok(new { message = _localizer["Success"].Value, categories });
         }
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        public async Task<IActionResult> GetById([FromRoute]int id)
         {
-            var category = _categoryService.GetCategoryById(id);
+            var category = await _categoryService.GetCategoryByIdAsync(id);
+            if (category is null)
+            {
+                return NotFound(new { message = _localizer["CategoryNotFound"].Value });
+            }
             return Ok(new { message = _localizer["Success"].Value, category });
         }
     }
