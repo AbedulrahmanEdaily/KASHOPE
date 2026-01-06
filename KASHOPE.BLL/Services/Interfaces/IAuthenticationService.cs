@@ -1,5 +1,6 @@
-﻿using KASHOPE.DAL.DTO.Request;
+﻿using KASHOPE.DAL.DTO.Request.AccountRequest;
 using KASHOPE.DAL.DTO.Response;
+using KASHOPE.DAL.DTO.Response.AccountResponse;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace KASHOPE.BLL.Services.Interfaces
         Task<bool> ConfirmEmailAsync(string token,string userId);
         Task<BaseResponse> ResetPasswordAsync(ResetPasswordRequest request);
         Task<BaseResponse> ChangePasswordAsync(ChangePasswordRequest request);
+        Task<LoginResponse> RefreshTokenAsync(TokenApiModel request);
 
     }
 }

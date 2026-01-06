@@ -7,6 +7,11 @@ using System.Threading.Tasks;
 
 namespace KASHOPE.DAL.Models
 {
+    public enum Status
+    {
+        Inactive = 0,
+        Active = 1,
+    }
     public class BaseModel
     {
         public int Id { get; set; }

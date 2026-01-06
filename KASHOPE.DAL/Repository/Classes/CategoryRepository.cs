@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace KASHOPE.DAL.Repository.Classes
 {
-    public class CategoryRepository : ICategoryRepository
+    public class CategoryRepository :ICategoryRepository
     {
         private readonly ApplicationDbContext _context;
 
@@ -34,7 +34,7 @@ namespace KASHOPE.DAL.Repository.Classes
 
         public async Task<Category?> FindbyIdAsync(int id)
         {
-            return await _context.Categories.Include(c=>c.CategoryTranslations).FirstOrDefaultAsync(c=>c.Id == id);
+            return await _context.Categories.Include(c=>c.CategoryTranslations).Include(c => c.User).FirstOrDefaultAsync(c=>c.Id == id);
         }
 
         public async Task<List<Category>> GetAllAsync()

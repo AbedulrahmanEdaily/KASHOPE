@@ -1,5 +1,5 @@
 ﻿using KASHOPE.BLL.Services.Interfaces;
-using KASHOPE.DAL.DTO.Request;
+using KASHOPE.DAL.DTO.Request.CategoryRequest;
 using KASHOPE.PL.Resources;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -35,7 +35,7 @@ namespace KASHOPE.PL.Area.Admin.Controllers
             var category = await _categoryService.GetCategoryByIdAsync(id);
             if(category is null)
             {
-                return NotFound(new { message = _localizer["CategoryNotFound"].Value });
+                return NotFound(new { message = _localizer["NotFound"].Value });
             }
             return Ok(new { message = _localizer["Success"].Value, category });
         }

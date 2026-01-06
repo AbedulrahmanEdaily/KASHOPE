@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KASHOPE.DAL.DTO.Request
+namespace KASHOPE.DAL.DTO.Request.AccountRequest
 {
-    public class ResetPasswordRequest
+    public class LoginRequest
     {
         public string Email { get; set; }
+        public string Password { get; set; }
     }
 }

@@ -74,6 +74,7 @@ namespace KASHOPE.PL
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
+                    ClockSkew = TimeSpan.Zero,
                     ValidIssuer = builder.Configuration["Jwt:Issuer"],
                     ValidAudience = builder.Configuration["Jwt:Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
@@ -86,6 +87,7 @@ namespace KASHOPE.PL
             {
                 app.MapOpenApi();
             }
+            app.UseStaticFiles();
             app.UseHttpsRedirection();
             app.UseAuthorization();
             using(var scope = app.Services.CreateScope())

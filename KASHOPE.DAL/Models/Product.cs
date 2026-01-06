@@ -11,11 +11,12 @@ namespace KASHOPE.DAL.Models
     {
         public decimal Price { get; set; }
         public decimal Discount { get; set; }
-        public decimal Quantity { get; set; }
+        public int Quantity { get; set; }
         public double Rate { get; set; }
         public string? MainImage { get; set; }
         public int CategoryId { get; set; }
         public Category Category { get; set; }
         public List<ProductTranslation> ProductTranslations { get; set; }
+        public List<ProductImage?> SubImages { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using KASHOPE.BLL.Services.Interfaces;
-using KASHOPE.DAL.DTO.Request;
+using KASHOPE.DAL.DTO.Request.CategoryRequest;
 using KASHOPE.DAL.DTO.Response;
+using KASHOPE.DAL.DTO.Response.CategoryResponse;
 using KASHOPE.DAL.Models;
 using KASHOPE.DAL.Repository.Classes;
 using KASHOPE.DAL.Repository.Interfaces;
@@ -67,6 +68,13 @@ namespace KASHOPE.BLL.Services.Classes
         {
             var category = await _categoryRepository.FindbyIdAsync(id);
             var response = category.Adapt<CategoryResponse>();
+            return response;
+        }
+        public async Task<CategoryUserResponse> GetCategoryByIdAsync(int id,string lang)
+        {
+            var category = await _categoryRepository.FindbyIdAsync(id);
+            category.CategoryTranslations = category.CategoryTranslations.Where(t => t.Language == lang).ToList();
+            var response = category.BuildAdapter().AddParameters("lang",lang).AdaptToType<CategoryUserResponse>();
             return response;
         }
 

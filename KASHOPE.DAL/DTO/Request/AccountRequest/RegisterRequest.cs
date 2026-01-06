@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KASHOPE.DAL.DTO.Request
+namespace KASHOPE.DAL.DTO.Request.AccountRequest
 {
     public class RegisterRequest
     {

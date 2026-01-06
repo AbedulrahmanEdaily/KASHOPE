@@ -4,16 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KASHOPE.DAL.Models
+namespace KASHOPE.DAL.DTO.Request.ProductRespnse
 {
-    public class ProductTranslation
+    public class ProductTranslationResponse
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public string Language { get; set; }
-        public int ProductId { get; set; }
-        public Product Product { get; set; }
-
     }
 }

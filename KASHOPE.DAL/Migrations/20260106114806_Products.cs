@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace KASHOPE.DAL.Migrations
 {
     /// <inheritdoc />
-    public partial class addproduct : Migration
+    public partial class Products : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -20,14 +20,14 @@ namespace KASHOPE.DAL.Migrations
                 oldType: "nvarchar(max)");
 
             migrationBuilder.CreateTable(
-                name: "Product",
+                name: "Products",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Discount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Quantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
                     Rate = table.Column<double>(type: "float", nullable: false),
                     MainImage = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CategoryId = table.Column<int>(type: "int", nullable: false),
@@ -39,15 +39,15 @@ namespace KASHOPE.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Product", x => x.Id);
+                    table.PrimaryKey("PK_Products", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Product_Categories_CategoryId",
+                        name: "FK_Products_Categories_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "Categories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Product_Users_CreatedBy",
+                        name: "FK_Products_Users_CreatedBy",
                         column: x => x.CreatedBy,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -55,23 +55,43 @@ namespace KASHOPE.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProductTranslation",
+                name: "ProductImages",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Image = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductImages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ProductImages_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProductTranslations",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Descripation = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Language = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProductTranslation", x => x.Id);
+                    table.PrimaryKey("PK_ProductTranslations", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ProductTranslation_Product_ProductId",
+                        name: "FK_ProductTranslations_Products_ProductId",
                         column: x => x.ProductId,
-                        principalTable: "Product",
+                        principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -82,18 +102,23 @@ namespace KASHOPE.DAL.Migrations
                 column: "CreatedBy");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Product_CategoryId",
-                table: "Product",
+                name: "IX_ProductImages_ProductId",
+                table: "ProductImages",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_CategoryId",
+                table: "Products",
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Product_CreatedBy",
-                table: "Product",
+                name: "IX_Products_CreatedBy",
+                table: "Products",
                 column: "CreatedBy");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductTranslation_ProductId",
-                table: "ProductTranslation",
+                name: "IX_ProductTranslations_ProductId",
+                table: "ProductTranslations",
                 column: "ProductId");
 
             migrationBuilder.AddForeignKey(
@@ -112,10 +137,13 @@ namespace KASHOPE.DAL.Migrations
                 table: "Categories");
 
             migrationBuilder.DropTable(
-                name: "ProductTranslation");
+                name: "ProductImages");
 
             migrationBuilder.DropTable(
-                name: "Product");
+                name: "ProductTranslations");
+
+            migrationBuilder.DropTable(
+                name: "Products");
 
             migrationBuilder.DropIndex(
                 name: "IX_Categories_CreatedBy",

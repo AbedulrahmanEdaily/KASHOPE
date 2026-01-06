@@ -1,6 +1,7 @@
 ﻿using KASHOPE.BLL.Services.Interfaces;
-using KASHOPE.DAL.DTO.Request;
+using KASHOPE.DAL.DTO.Request.AccountRequest;
 using KASHOPE.DAL.DTO.Response;
+using KASHOPE.DAL.DTO.Response.AccountResponse;
 using KASHOPE.DAL.Models;
 using Mapster;
 using Microsoft.AspNetCore.Identity;
@@ -21,13 +22,15 @@ namespace KASHOPE.BLL.Services.Classes
         private readonly IEmailSender _emailSender;
         private readonly IConfiguration _configuration;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly ITokenService _tokenService;
 
-        public AuthenticationService(UserManager<ApplicationUser> userManager,IEmailSender emailSender,IConfiguration configuration,SignInManager<ApplicationUser> signInManager)
+        public AuthenticationService(UserManager<ApplicationUser> userManager,IEmailSender emailSender,IConfiguration configuration,SignInManager<ApplicationUser> signInManager,ITokenService tokenService)
         {
             _userManager = userManager;
             _emailSender = emailSender;
             _configuration = configuration;
             _signInManager = signInManager;
+            _tokenService = tokenService;
         }
         public async Task<BaseResponse> LoginAsync(LoginRequest loginRequest)
         {
@@ -73,12 +76,16 @@ namespace KASHOPE.BLL.Services.Classes
                         Message = "Invalid Password"
                     };
                 }
-
+                var refreshToken = await _tokenService.GenerateRefreshToken();
+                user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+                user.RefreshToken = refreshToken;
+                await _userManager.UpdateAsync(user);
                 return new LoginResponse
                 {
                     Success = true,
                     Message = "Login Successfully",
-                    Token = await GenerateJwtToken(user)
+                    Token = await _tokenService.GenerateJwtToken(user),
+                    RefreshToken = refreshToken
                 };
             }
             catch (Exception ex)
@@ -135,28 +142,7 @@ namespace KASHOPE.BLL.Services.Classes
             var result = await _userManager.ConfirmEmailAsync(user, token);
             return result.Succeeded;
         }
-        private async Task<string> GenerateJwtToken(ApplicationUser user)
-        {
-            var roles = await _userManager.GetRolesAsync(user);
-            var Claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Email,user.Email),
-                new Claim(ClaimTypes.Name,user.UserName),
-                new Claim(ClaimTypes.NameIdentifier,user.Id),
-                new Claim(ClaimTypes.Role,string.Join(',',roles))
-            };
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(
-                issuer: _configuration["Jwt:Issuer"],
-                audience: _configuration["Jwt:Audience"],
-                claims: Claims,
-                expires: DateTime.UtcNow.AddDays(30),
-                signingCredentials: creds);
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
+       
 
         public async Task<BaseResponse> ResetPasswordAsync(ResetPasswordRequest request)
         {
@@ -219,6 +205,35 @@ namespace KASHOPE.BLL.Services.Classes
             {
                 Success = true,
                 Message = "Password changed successfully"
+            };
+        }
+        public async Task<LoginResponse> RefreshTokenAsync(TokenApiModel request)
+        {
+
+            string accessToken = request.AccessToken;
+            string refreshToken = request.RefreshToken;
+            var principal = _tokenService.GetPrincipalFromExpiredToken(accessToken);
+            var username = principal.Identity.Name;
+            var user = _userManager.Users.SingleOrDefault(u => u.UserName == username);
+            if (user is null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
+            {
+                return new LoginResponse
+                {
+                    Success = false,
+                    Message = "Invalid Refresh Token"
+                };
+            }
+                
+            var newAccessToken = await _tokenService.GenerateJwtToken(user);
+            var newRefreshToken = await _tokenService.GenerateRefreshToken();
+            user.RefreshToken =  newRefreshToken;
+            await _userManager.UpdateAsync(user);
+            return new LoginResponse
+            {
+                Success = true,
+                Message = "Token Refreshed Successfully",
+                Token = newAccessToken,
+                RefreshToken = newRefreshToken
             };
         }
     }

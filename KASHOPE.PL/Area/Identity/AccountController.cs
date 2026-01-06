@@ -1,5 +1,5 @@
 ﻿using KASHOPE.BLL.Services.Interfaces;
-using KASHOPE.DAL.DTO.Request;
+using KASHOPE.DAL.DTO.Request.AccountRequest;
 using KASHOPE.DAL.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -66,6 +66,16 @@ namespace KASHOPE.PL.Area.Identity
         public async Task<IActionResult> ChangePassword([FromBody]ChangePasswordRequest request)
         {
             var result = await _authenticationService.ChangePasswordAsync(request);
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
+        [HttpPatch("RefreshToken")]
+        public async Task<IActionResult> RefreshToken([FromBody] TokenApiModel request)
+        {
+            var result = await _authenticationService.RefreshTokenAsync(request);
             if (!result.Success)
             {
                 return BadRequest(result);

@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KASHOPE.DAL.Models
+namespace KASHOPE.DAL.DTO.Response.AccountResponse
 {
-    public enum Status
+    public class RegisterResponse: BaseResponse
     {
-        Inactive = 0,
-        Active = 1,
+
     }
 }

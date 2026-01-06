@@ -34,12 +34,12 @@ namespace KASHOPE.PL.Area.User.Controllers
             return Ok(new { message = _localizer["Success"].Value, categories });
         }
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById([FromRoute]int id)
+        public async Task<IActionResult> GetById([FromRoute]int id,[FromQuery]string lang)
         {
-            var category = await _categoryService.GetCategoryByIdAsync(id);
+            var category = await _categoryService.GetCategoryByIdAsync(id,lang);
             if (category is null)
             {
-                return NotFound(new { message = _localizer["CategoryNotFound"].Value });
+                return NotFound(new { message = _localizer["NotFound"].Value });
             }
             return Ok(new { message = _localizer["Success"].Value, category });
         }

@@ -17,6 +17,10 @@ namespace KASHOPE.PL
             services.AddScoped<ISeedData, RoleSeedData>();
             services.AddScoped<ISeedData, UserSeedData>();
             services.AddTransient<IEmailSender, EmailSender>();
+            services.AddTransient<IFileService, FileService>();
+            services.AddTransient<IProductRepository, ProductRepository>();
+            services.AddTransient<IProductService, ProductService>();
+            services.AddTransient<ITokenService, TokenService>();
         }
     }
 }

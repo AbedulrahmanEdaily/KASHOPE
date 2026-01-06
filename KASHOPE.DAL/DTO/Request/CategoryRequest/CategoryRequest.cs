@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KASHOPE.DAL.DTO.Request
+namespace KASHOPE.DAL.DTO.Request.CategoryRequest
 {
     public class CategoryRequest
     {

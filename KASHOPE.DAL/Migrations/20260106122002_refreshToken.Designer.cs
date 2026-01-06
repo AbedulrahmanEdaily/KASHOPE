@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KASHOPE.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251225155320_add-product")]
-    partial class addproduct
+    [Migration("20260106122002_refreshToken")]
+    partial class refreshToken
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -78,6 +78,12 @@ namespace KASHOPE.DAL.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("RefreshToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("RefreshTokenExpiryTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
@@ -189,8 +195,8 @@ namespace KASHOPE.DAL.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal>("Quantity")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
 
                     b.Property<double>("Rate")
                         .HasColumnType("float");
@@ -210,7 +216,29 @@ namespace KASHOPE.DAL.Migrations
 
                     b.HasIndex("CreatedBy");
 
-                    b.ToTable("Product");
+                    b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("KASHOPE.DAL.Models.ProductImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Image")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductImages");
                 });
 
             modelBuilder.Entity("KASHOPE.DAL.Models.ProductTranslation", b =>
@@ -221,7 +249,7 @@ namespace KASHOPE.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Descripation")
+                    b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -240,7 +268,7 @@ namespace KASHOPE.DAL.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductTranslation");
+                    b.ToTable("ProductTranslations");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -326,6 +354,17 @@ namespace KASHOPE.DAL.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("KASHOPE.DAL.Models.ProductImage", b =>
+                {
+                    b.HasOne("KASHOPE.DAL.Models.Product", "Product")
+                        .WithMany("SubImages")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("KASHOPE.DAL.Models.ProductTranslation", b =>
                 {
                     b.HasOne("KASHOPE.DAL.Models.Product", "Product")
@@ -362,6 +401,8 @@ namespace KASHOPE.DAL.Migrations
             modelBuilder.Entity("KASHOPE.DAL.Models.Product", b =>
                 {
                     b.Navigation("ProductTranslations");
+
+                    b.Navigation("SubImages");
                 });
 #pragma warning restore 612, 618
         }
