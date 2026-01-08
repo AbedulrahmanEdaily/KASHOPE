@@ -21,6 +21,8 @@ namespace KASHOPE.PL
             services.AddTransient<IProductRepository, ProductRepository>();
             services.AddTransient<IProductService, ProductService>();
             services.AddTransient<ITokenService, TokenService>();
+            services.AddTransient<ICartRepository, CartRepository>();
+            services.AddTransient<ICartService, CartService>();
         }
     }
 }

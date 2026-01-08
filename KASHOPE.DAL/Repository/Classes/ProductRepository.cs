@@ -10,22 +10,15 @@ using System.Threading.Tasks;
 
 namespace KASHOPE.DAL.Repository.Classes
 {
-    public class ProductRepository : IProductRepository
+    public class ProductRepository : GenericRepository<Product>,IProductRepository
     {
         private readonly ApplicationDbContext _context;
 
-        public ProductRepository(ApplicationDbContext context)
+        public ProductRepository(ApplicationDbContext context):base(context)
         {
             _context = context;
         }
-        public async Task<Product> AddAsync(Product request)
-        {
-            await _context.AddAsync(request);
-            await _context.SaveChangesAsync();
-            return request;
-        }
-
-        public async Task<List<Product>> GetAllAsync()
+        public new async Task<List<Product>> GetAllAsync()
         {
             return await _context.Products
                 .Include(p => p.ProductTranslations)
@@ -34,6 +27,16 @@ namespace KASHOPE.DAL.Repository.Classes
                 .Include(p=>p.Category)
                 .ThenInclude(c => c.CategoryTranslations)
                 .ToListAsync();
+        }
+        public  async Task<Product?> FindByIdAsync(int id)
+        {
+            return await _context.Products
+                .Include(p => p.ProductTranslations)
+                .Include(p => p.User)
+                .Include(p => p.SubImages)
+                .Include(p => p.Category)
+                .ThenInclude(c => c.CategoryTranslations)
+                .FirstOrDefaultAsync(p=>p.Id == id);
         }
     }
 }

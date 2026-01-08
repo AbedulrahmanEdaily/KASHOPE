@@ -28,13 +28,13 @@ namespace KASHOPE.PL.Area.User.Controllers
             _localizer = localizer;
         }
         [HttpGet("")]
-        public async Task<IActionResult> Index([FromQuery] string lang)
+        public async Task<IActionResult> Index([FromQuery] string lang = "en")
         {
             var categories = await _categoryService.GetAllCategoriesAsync(lang);
             return Ok(new { message = _localizer["Success"].Value, categories });
         }
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById([FromRoute]int id,[FromQuery]string lang)
+        public async Task<IActionResult> GetById([FromRoute]int id,[FromQuery]string lang = "en")
         {
             var category = await _categoryService.GetCategoryByIdAsync(id,lang);
             if (category is null)

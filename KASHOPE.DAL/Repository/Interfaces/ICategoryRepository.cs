@@ -7,12 +7,7 @@ using System.Threading.Tasks;
 
 namespace KASHOPE.DAL.Repository.Interfaces
 {
-    public interface ICategoryRepository
+    public interface ICategoryRepository:IGenericRepository<Category>
     {
-        Task<List<Category>> GetAllAsync();
-        Task<Category> CreateAsync(Category Request);
-        Task DeleteAsync(Category category);
-        Task UpdateAsync(Category category);
-        Task <Category> FindbyIdAsync(int id);
     }
 }

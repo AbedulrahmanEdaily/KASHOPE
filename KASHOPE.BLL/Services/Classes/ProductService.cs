@@ -36,13 +36,27 @@ namespace KASHOPE.BLL.Services.Classes
                 var subImagePaths = await _fileService.UploadAsync(request.SubImages);
                 product.SubImages = subImagePaths.Adapt<List<ProductImage>>();
             }
-            var result = await _productRepository.AddAsync(product);
+            var result = await _productRepository.CreateAsync(product);
         }
 
         public async Task<List<ProductResponse>> GetAllProductsAsync()
         {
             var products = await _productRepository.GetAllAsync();
             return products.Adapt<List<ProductResponse>>();
+        }
+
+        public async Task<List<ProductUserResponse>> GetAllProductsForUserAsync(string lang)
+        {
+            var products = await _productRepository.GetAllAsync();
+            var response= products.BuildAdapter().AddParameters("lang",lang).AdaptToType<List<ProductUserResponse>>();
+            return response;
+        }
+
+        public async Task<List<ProductDetailsUserResponse>> GetAllProductsDetailsForUserAsync(string lang)
+        {
+            var products = await _productRepository.GetAllAsync();
+            var response = products.BuildAdapter().AddParameters("lang", lang).AdaptToType<List<ProductDetailsUserResponse>>();
+            return response;
         }
     }
 }

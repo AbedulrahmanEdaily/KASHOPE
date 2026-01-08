@@ -1,7 +1,9 @@
-﻿using KASHOPE.DAL.DTO.Response.CategoryResponse;
+﻿using KASHOPE.DAL.DTO.Response.CartResponse;
+using KASHOPE.DAL.DTO.Response.CategoryResponse;
 using KASHOPE.DAL.DTO.Response.ProductResponse;
 using KASHOPE.DAL.Models;
 using Mapster;
+using Microsoft.AspNetCore.Routing.Constraints;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +24,7 @@ namespace KASHOPE.BLL.Mapster
                  src => src.User.UserName)
             .Map(dest => dest.Category,
                  src => src.Category.CategoryTranslations
-                     .Where(t => t.Id == src.CategoryId)
+                     .Where(t => t.CategoryId == src.CategoryId)
                      .Select(t => t.Name)
                      .FirstOrDefault())
             .Map(dest => dest.MainImage,
@@ -32,6 +34,21 @@ namespace KASHOPE.BLL.Mapster
                  {
                      Image = $"https://localhost:7026/images/{img.Image}"
                  }).ToList());
+
+            TypeAdapterConfig<Product, ProductUserResponse>.NewConfig()
+                .Map(dest => dest.Name, src => src.ProductTranslations.Where(n => n.Language == MapContext.Current.Parameters["lang"].ToString()).Select(t => t.Name).FirstOrDefault())
+                .Map(dest => dest.MainImage, src => $"https://localhost:7026/images/{src.MainImage}")
+                .Map(dest => dest.Category, src => src.Category.CategoryTranslations.Where(n=>n.Language == MapContext.Current.Parameters["lang"].ToString()).Select(t => t.Name).FirstOrDefault());
+            
+            TypeAdapterConfig<Product, ProductDetailsUserResponse>.NewConfig()
+                .Map(dest => dest.Name, src => src.ProductTranslations.Where(n => n.Language == MapContext.Current.Parameters["lang"].ToString()).Select(t => t.Name).FirstOrDefault())
+                .Map(dest => dest.Description, src => src.ProductTranslations.Where(n => n.Language == MapContext.Current.Parameters["lang"].ToString()).Select(t => t.Description).FirstOrDefault())
+                .Map(dest => dest.MainImage, src => $"https://localhost:7026/images/{src.MainImage}")
+                .Map(dest => dest.Category, src => src.Category.CategoryTranslations.Where(n => n.Language == MapContext.Current.Parameters["lang"].ToString()).Select(t => t.Name).FirstOrDefault())
+                .Map(dest => dest.SubImages, src => src.SubImages.Select(t => new ProductImage
+                {
+                    Image = $"https://localhost:7026/images/{t.Image}"
+                }).ToList());
         }
     }
 }
