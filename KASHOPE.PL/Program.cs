@@ -1,3 +1,4 @@
+using KASHOPE.BLL;
 using KASHOPE.BLL.Mapster;
 using KASHOPE.BLL.Services.Classes;
 using KASHOPE.BLL.Services.Interfaces;
@@ -13,6 +14,7 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Stripe;
 using System.Globalization;
 using System.Text;
 using System.Threading.Tasks;
@@ -81,6 +83,8 @@ namespace KASHOPE.PL
                 };
             });
             MapsterConfiguration.MapConfigCategory();
+            builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+            StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
             var app = builder.Build();
             app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
             if (app.Environment.IsDevelopment())

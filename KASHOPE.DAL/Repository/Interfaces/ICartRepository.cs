@@ -11,7 +11,7 @@ namespace KASHOPE.DAL.Repository.Interfaces
     {
         Task<List<Cart>> GetAllAsync(string userId);
         Task CreateAsync(Cart request);
-        Task IncreaseCountOfItemAsync(Cart item,int count);
+        Task UpdateAsync(Cart item);
         Task DeleteAsync(Cart request);
         Task ClearAsync(string userId);
     }

@@ -24,9 +24,6 @@ namespace KASHOPE.DAL.Repository.Classes
                 .Where(c => c.UserId == userId)
                 .Include(c => c.Product)
                 .ThenInclude(p => p.ProductTranslations)
-                .Include(c => c.Product)
-                .ThenInclude(p => p.Category)
-                .ThenInclude(cat => cat.CategoryTranslations)
                 .Include(c => c.User)
                 .ToListAsync();
 
@@ -38,9 +35,9 @@ namespace KASHOPE.DAL.Repository.Classes
             await _context.SaveChangesAsync();
         }
 
-        public async Task IncreaseCountOfItemAsync(Cart item,int count)
+        public async Task UpdateAsync(Cart item)
         {
-            item.Count += count;
+            _context.Update(item);
             await _context.SaveChangesAsync();
         }
 

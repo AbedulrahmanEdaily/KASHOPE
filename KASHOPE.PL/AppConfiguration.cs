@@ -23,6 +23,7 @@ namespace KASHOPE.PL
             services.AddTransient<ITokenService, TokenService>();
             services.AddTransient<ICartRepository, CartRepository>();
             services.AddTransient<ICartService, CartService>();
+            services.AddTransient<ICheckoutService, CheckoutService>();
         }
     }
 }

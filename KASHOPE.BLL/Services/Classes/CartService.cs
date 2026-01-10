@@ -36,9 +36,9 @@ namespace KASHOPE.BLL.Services.Classes
                 };
             }
             var itemsInCart = await _cartRepository.GetAllAsync(userId);
-            var itemInCart = itemsInCart.FirstOrDefault(i => i.ProductId == request.ProductId);
+            var itemInCart = itemsInCart.FirstOrDefault(i => i.UserId == userId && i.ProductId == request.ProductId);
             var count = itemInCart?.Count ?? 0;
-            if (request.Count > product.Quantity || request.Count + count > product.Quantity)
+            if (request.Count + count > product.Quantity)
             {
                 return new BaseResponse
                 {
@@ -48,7 +48,8 @@ namespace KASHOPE.BLL.Services.Classes
             }
             if(itemInCart is not null)
             {
-                await _cartRepository.IncreaseCountOfItemAsync(itemInCart,request.Count);                    
+                itemInCart.Count += request.Count;
+                await _cartRepository.UpdateAsync(itemInCart);                    
                 return new BaseResponse
                 {
                     Success = true,
@@ -111,6 +112,16 @@ namespace KASHOPE.BLL.Services.Classes
                 {
                     Success = false,
                     Message = "Item Not Found"
+                };
+            }
+            if(itemInCart.Count > 1)
+            {
+                itemInCart.Count--;
+                await _cartRepository.UpdateAsync(itemInCart);
+                return new BaseResponse
+                {
+                    Success = true,
+                    Message = "Item removed from cart successfully"
                 };
             }
             await _cartRepository.DeleteAsync(itemInCart);
