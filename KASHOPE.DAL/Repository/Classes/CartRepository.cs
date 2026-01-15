@@ -24,8 +24,7 @@ namespace KASHOPE.DAL.Repository.Classes
                 .Where(c => c.UserId == userId)
                 .Include(c => c.Product)
                 .ThenInclude(p => p.ProductTranslations)
-                .Include(c => c.User)
-                .ToListAsync();
+                .Include(c => c.User).ToListAsync();
 
             return carts;
         }

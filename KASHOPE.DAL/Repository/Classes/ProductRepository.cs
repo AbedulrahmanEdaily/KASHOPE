@@ -38,5 +38,22 @@ namespace KASHOPE.DAL.Repository.Classes
                 .ThenInclude(c => c.CategoryTranslations)
                 .FirstOrDefaultAsync(p=>p.Id == id);
         }
+
+        public async Task<bool> DecreaseQuantityItemAsync(List<(int productId, int quantity)> items)
+        {
+            var productIds = items.Select(i => i.productId);
+            var products = await _context.Products.Where(p =>productIds.Contains(p.Id)).ToListAsync();
+            foreach(var product in products)
+            {
+                var item = items.FirstOrDefault(p => p.productId == product.Id);
+                if(product.Quantity < item.quantity)
+                {
+                    return false;
+                }
+                product.Quantity -= item.quantity;
+            }
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }

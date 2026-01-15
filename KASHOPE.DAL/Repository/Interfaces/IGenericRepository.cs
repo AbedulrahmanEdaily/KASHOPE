@@ -9,7 +9,7 @@ namespace KASHOPE.DAL.Repository.Interfaces
 {
     public interface IGenericRepository<T>
     {
-        Task<List<T>> GetAllAsync();
+        Task<IEnumerable<T>> GetAllAsync();
         Task<T> CreateAsync(T request);
         Task DeleteAsync(T request);
         Task UpdateAsync(T request);

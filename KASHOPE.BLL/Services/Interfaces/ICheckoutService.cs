@@ -10,6 +10,7 @@ namespace KASHOPE.BLL.Services.Interfaces
 {
     public interface ICheckoutService
     {
-        Task<CheckoutResponse> ProccessPaymentAsync(CheckoutRequest request , string userId);
+        Task<CheckoutResponse> ProcessPaymentAsync(CheckoutRequest request , string userId);
+        Task<CheckoutResponse> HandlePaymentAsync(string sessionId);
     }
 }

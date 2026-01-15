@@ -38,7 +38,7 @@ namespace KASHOPE.DAL.Repository.Classes
             return await _context.Set<T>().FindAsync(id);
         }
 
-        public async Task<List<T>> GetAllAsync()
+        public async Task<IEnumerable<T>> GetAllAsync()
         {
             return await  _context.Set<T>().ToListAsync();
         }

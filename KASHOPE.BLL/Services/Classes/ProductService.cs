@@ -45,14 +45,14 @@ namespace KASHOPE.BLL.Services.Classes
             return products.Adapt<List<ProductResponse>>();
         }
 
-        public async Task<List<ProductUserResponse>> GetAllProductsForUserAsync(string lang)
+        public async Task<List<ProductUserResponse>> GetAllProductsForUserAsync(string lang = "en")
         {
             var products = await _productRepository.GetAllAsync();
             var response= products.BuildAdapter().AddParameters("lang",lang).AdaptToType<List<ProductUserResponse>>();
             return response;
         }
 
-        public async Task<List<ProductDetailsUserResponse>> GetAllProductsDetailsForUserAsync(string lang)
+        public async Task<List<ProductDetailsUserResponse>> GetAllProductsDetailsForUserAsync(string lang = "en")
         {
             var products = await _productRepository.GetAllAsync();
             var response = products.BuildAdapter().AddParameters("lang", lang).AdaptToType<List<ProductDetailsUserResponse>>();

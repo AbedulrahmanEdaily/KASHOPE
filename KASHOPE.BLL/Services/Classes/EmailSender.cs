@@ -13,7 +13,7 @@ namespace KASHOPE.BLL.Services.Classes
     {
         public Task SendEmailAsync(string email, string subject, string htmlMessage)
         {
-            var fromAddress = new MailAddress("dylyb7883@gmail.com", "KASHOPE"); 
+            var fromAddress = new MailAddress("dylyb7883@gmail.com", "KASHOP"); 
 
             var client = new SmtpClient("smtp.gmail.com", 587)
             {

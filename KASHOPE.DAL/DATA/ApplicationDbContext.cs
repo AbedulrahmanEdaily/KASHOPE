@@ -22,6 +22,8 @@ namespace KASHOPE.DAL.DATA
         public DbSet<ProductTranslation> ProductTranslations { get; set; }
         public DbSet<ProductImage> ProductImages { get; set; }
         public DbSet<Cart> Carts { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options,IHttpContextAccessor httpContextAccessor) : base(options)
         {
             _httpContextAccessor = httpContextAccessor;
@@ -38,7 +40,8 @@ namespace KASHOPE.DAL.DATA
             builder.Ignore<IdentityUserToken<string>>();
             builder.Ignore<IdentityRoleClaim<string>>();
             builder.Entity<Cart>().HasOne<ApplicationUser>(c => c.User).WithMany().HasForeignKey(c => c.UserId).OnDelete(DeleteBehavior.NoAction);
-
+            builder.Entity<Product>().HasOne<ApplicationUser>(c => c.User).WithMany().HasForeignKey(c => c.CreatedBy).OnDelete(DeleteBehavior.NoAction);
+            builder.Entity<Order>().HasOne<ApplicationUser>(c => c.User).WithMany().HasForeignKey(c => c.UserId).OnDelete(DeleteBehavior.NoAction);
         }
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
