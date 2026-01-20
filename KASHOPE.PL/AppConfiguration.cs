@@ -26,6 +26,8 @@ namespace KASHOPE.PL
             services.AddTransient<ICheckoutService, CheckoutService>();
             services.AddTransient<IOrderRepository, OrderRepository>();
             services.AddTransient<IOrderItemRepository, OrderItemRepository>();
+            services.AddExceptionHandler<GlobalExceptionHandler>();
+            services.AddProblemDetails();
         }
     }
 }

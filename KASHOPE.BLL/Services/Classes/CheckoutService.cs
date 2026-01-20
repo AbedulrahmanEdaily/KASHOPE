@@ -1,4 +1,5 @@
 ﻿using KASHOPE.BLL.Services.Interfaces;
+using KASHOPE.DAL.DATA;
 using KASHOPE.DAL.DTO.Request;
 using KASHOPE.DAL.DTO.Response;
 using KASHOPE.DAL.Models;
@@ -16,6 +17,7 @@ namespace KASHOPE.BLL.Services.Classes
 {
     public class CheckoutService : ICheckoutService
     {
+        private readonly ApplicationDbContext _context;
         private readonly IProductRepository _productRepository;
         private readonly ICartRepository _cartRepository;
         private readonly IOrderRepository _orderRepository;
@@ -23,8 +25,9 @@ namespace KASHOPE.BLL.Services.Classes
         private readonly IEmailSender _emailSender;
         private readonly IOrderItemRepository _orderItemRepository;
 
-        public CheckoutService(IProductRepository productRepository,ICartRepository cartRepository,IOrderRepository orderRepository,UserManager<ApplicationUser> userManager,IEmailSender emailSender,IOrderItemRepository orderItemRepository)
+        public CheckoutService(ApplicationDbContext context,IProductRepository productRepository,ICartRepository cartRepository,IOrderRepository orderRepository,UserManager<ApplicationUser> userManager,IEmailSender emailSender,IOrderItemRepository orderItemRepository)
         {
+            _context = context;
             _productRepository = productRepository;
             _cartRepository = cartRepository;
             _orderRepository = orderRepository;
@@ -36,48 +39,65 @@ namespace KASHOPE.BLL.Services.Classes
         
         public async Task<CheckoutResponse> HandlePaymentAsync(string sessionId)
         {
-            var service = new SessionService();
-            var session = await service.GetAsync(sessionId);
-            var userId = session.Metadata["userId"];
-            var order = await _orderRepository.GetBySessionIdAsync(sessionId);
-            order.PaymentId = session.PaymentIntentId;
-            order.OrderStatus = OrderStatus.Approved;
-            await _orderRepository.UpdateAsync(order);
-            var user = await _userManager.FindByIdAsync(userId);
-            var items = await _cartRepository.GetAllAsync(userId);
-            var orderItems = new List<OrderItem>();
-            var productUpdated = new List<(int productId, int quantity)>();
-            foreach(var item in items) {
-                var orderItem = new OrderItem
-                {
-                    ProductId = item.ProductId,
-                    OrderId = order.Id,
-                    UnitPrice = item.Product.Price,
-                    Quantity =  item.Count,
-                    TotalPrice = item.Count * item.Product.Price
-                };
-                orderItems.Add(orderItem);
-                productUpdated.Add((item.ProductId, item.Count));
-            }
-            await _orderItemRepository.CreateAsync(orderItems);
-            await _cartRepository.ClearAsync(userId);
-            var decrease = await _productRepository.DecreaseQuantityItemAsync(productUpdated);
-            if (!decrease)
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
+                var service = new SessionService();
+                var session = await service.GetAsync(sessionId);
+                var userId = session.Metadata["userId"];
+                var order = await _orderRepository.GetBySessionIdAsync(sessionId);
+                order.PaymentId = session.PaymentIntentId;
+                order.OrderStatus = OrderStatus.Approved;
+                await _orderRepository.UpdateAsync(order);
+                var user = await _userManager.FindByIdAsync(userId);
+                var items = await _cartRepository.GetAllAsync(userId);
+                var orderItems = new List<OrderItem>();
+                var productUpdated = new List<(int productId, int quantity)>();
+                foreach (var item in items)
+                {
+                    var orderItem = new OrderItem
+                    {
+                        ProductId = item.ProductId,
+                        OrderId = order.Id,
+                        UnitPrice = item.Product.Price,
+                        Quantity = item.Count,
+                        TotalPrice = item.Count * item.Product.Price
+                    };
+                    orderItems.Add(orderItem);
+                    productUpdated.Add((item.ProductId, item.Count));
+                }
+                await _orderItemRepository.CreateAsync(orderItems);
+                var decrease = await _productRepository.DecreaseQuantityItemAsync(productUpdated);
+                if (!decrease)
+                {
+                    await transaction.RollbackAsync();
+                    return new CheckoutResponse
+                    {
+                        Success = false,
+                        Message = "Not Enough Stock"
+                    };
+                }
+                await _cartRepository.ClearAsync(userId);
+                await transaction.CommitAsync();
+                await _emailSender.SendEmailAsync(user.Email, "Payment Successfull", $"<h1>Thank you for your payment </h1> " +
+                        $"<h5>Your payment for order : <strong>{order.Id}</strong></h5>" +
+                        $"<h5>Total Amount : <strong>{order.AmountPaid}</strong></h5>");
+                return new CheckoutResponse
+                {
+                    Success = true,
+                    Message = "Payment Completed  Successfully"
+                };
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
                 return new CheckoutResponse
                 {
                     Success = false,
-                    Message = "Not Enough Stock"
+                    Message = "Faild"
                 };
             }
-            await _emailSender.SendEmailAsync(user.Email, "Payment Successfull", $"<h1>Thank you for your payment </h1> " +
-                    $"<h5>Your payment for order : <strong>{order.Id}</strong></h5>" +
-                    $"<h5>Total Amount : <strong>{order.AmountPaid}</strong></h5>");
-            return new CheckoutResponse
-            {
-                Success = true,
-                Message = "Payment Completed  Successfully"
-            };
+           
         }
 
         public async Task<CheckoutResponse> ProcessPaymentAsync(CheckoutRequest request,string userId)

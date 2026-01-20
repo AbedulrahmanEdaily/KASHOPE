@@ -22,7 +22,7 @@ namespace KASHOPE.DAL.Models
     {
         public int Id { get; set; }
         public OrderStatus OrderStatus { get; set; }
-        public DateTime OrderDate { get; set; }
+        public DateTime OrderDate { get; set; } = DateTime.UtcNow;
         public DateTime? ShippedDate { get; set; }
         public PaymentMethod PaymentMethod { get; set; }
         public string? SessionId { get; set; }

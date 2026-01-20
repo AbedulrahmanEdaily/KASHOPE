@@ -31,7 +31,7 @@ namespace KASHOPE.BLL.Services.Classes
         {
             try
             {
-                var category = await _categoryRepository.FindbyIdAsync(id);
+                var category = await _categoryRepository.FindByIdAsync(id);
                 if(category is null)
                 {
                     return new BaseResponse
@@ -66,13 +66,13 @@ namespace KASHOPE.BLL.Services.Classes
 
         public async Task<CategoryResponse> GetCategoryByIdAsync(int id)
         {
-            var category = await _categoryRepository.FindbyIdAsync(id);
+            var category = await _categoryRepository.FindByIdAsync(id);
             var response = category.Adapt<CategoryResponse>();
             return response;
         }
         public async Task<CategoryUserResponse> GetCategoryByIdAsync(int id,string lang)
         {
-            var category = await _categoryRepository.FindbyIdAsync(id);
+            var category = await _categoryRepository.FindByIdAsync(id);
             category.CategoryTranslations = category.CategoryTranslations.Where(t => t.Language == lang).ToList();
             var response = category.BuildAdapter().AddParameters("lang",lang).AdaptToType<CategoryUserResponse>();
             return response;
@@ -80,7 +80,7 @@ namespace KASHOPE.BLL.Services.Classes
 
         public async Task<BaseResponse> UpdateCategoryAsync(int id, CategoryRequest request)
         {
-            var category = await _categoryRepository.FindbyIdAsync(id);
+            var category = await _categoryRepository.FindByIdAsync(id);
             if(category is null)
             {
                 return new BaseResponse
@@ -117,7 +117,7 @@ namespace KASHOPE.BLL.Services.Classes
         }
         public async Task<BaseResponse> ToggleStatusAsync(int id)
         {
-            var category = await _categoryRepository.FindbyIdAsync(id);
+            var category = await _categoryRepository.FindByIdAsync(id);
             if (category is null)
             {
                 return new BaseResponse

@@ -19,7 +19,7 @@ namespace KASHOPE.DAL.Repository.Classes
             _context = context;
         }
 
-        public new async Task<Category?> FindbyIdAsync(int id)
+        public new async Task<Category?> FindByIdAsync(int id)
         {
             return await _context.Categories.Include(c=>c.CategoryTranslations).Include(c => c.User).FirstOrDefaultAsync(c=>c.Id == id);
         }

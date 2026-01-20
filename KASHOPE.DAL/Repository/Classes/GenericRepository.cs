@@ -22,23 +22,23 @@ namespace KASHOPE.DAL.Repository.Classes
 
         public async Task<T> CreateAsync(T request)
         {
-            await _context.AddAsync(request);
+            await _context.Set<T>().AddAsync(request);
             await _context.SaveChangesAsync();
             return request;
         }
 
         public async Task DeleteAsync(T request)
         {
-            _context.Remove(request);
+            _context.Set<T>().Remove(request);
             await _context.SaveChangesAsync();
         }
 
-        public async Task<T?> FindbyIdAsync(int id)
+        public async Task<T?> FindByIdAsync(int id)
         {
             return await _context.Set<T>().FindAsync(id);
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync()
+        public async Task<List<T>> GetAllAsync()
         {
             return await  _context.Set<T>().ToListAsync();
         }

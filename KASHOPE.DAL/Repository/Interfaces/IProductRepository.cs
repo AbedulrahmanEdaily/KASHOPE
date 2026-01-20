@@ -8,5 +8,6 @@ namespace KASHOPE.DAL.Repository.Interfaces
         Task<List<Product>> GetAllAsync();
         Task<Product?> FindByIdAsync(int id);
         Task<bool> DecreaseQuantityItemAsync(List<(int productId, int quantity)> products);
+        IQueryable<Product> Query();
     }
 }

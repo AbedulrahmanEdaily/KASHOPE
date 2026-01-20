@@ -91,6 +91,7 @@ namespace KASHOPE.PL
             {
                 app.MapOpenApi();
             }
+            app.UseExceptionHandler();
             app.UseStaticFiles();
             app.UseHttpsRedirection();
             app.UseAuthorization();

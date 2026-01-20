@@ -28,10 +28,20 @@ namespace KASHOPE.PL.Area.Admin.Controllers
             return Ok(products);
         }
         [HttpPost()]
-        public async Task<IActionResult> AddNewProduct([FromForm] ProductRequest requst)
+        public async Task<IActionResult> AddNewProduct([FromForm] ProductRequest request)
         {
-            await _productService.CreateAsync(requst);
-            return Ok(new { message =  _localizer["Success"].Value });
+            await _productService.CreateAsync(request);
+            return Created();
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProduct([FromRoute] int id)
+        {
+            var result = await _productService.DeleteProduct(id);
+            if (!result.Success)
+            {
+                return NotFound(result);
+            }
+            return Ok(result);
         }
     }
 }

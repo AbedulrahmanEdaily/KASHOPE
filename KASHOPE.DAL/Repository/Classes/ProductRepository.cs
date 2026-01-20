@@ -55,5 +55,16 @@ namespace KASHOPE.DAL.Repository.Classes
             await _context.SaveChangesAsync();
             return true;
         }
+        public  IQueryable<Product> Query()
+        {
+            var products = _context.Products
+                .Include(p => p.ProductTranslations)
+                .Include(p => p.User)
+                .Include(p => p.SubImages)
+                .Include(p => p.Category)
+                .ThenInclude(c => c.CategoryTranslations)
+                .AsQueryable();
+            return products;
+        }
     }
 }

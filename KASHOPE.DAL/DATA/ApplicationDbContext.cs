@@ -47,7 +47,6 @@ namespace KASHOPE.DAL.DATA
         {
             if (_httpContextAccessor.HttpContext != null)
             {
-
                 var entries = ChangeTracker.Entries<BaseModel>();
                 var currentUserId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
                 foreach (var entityEntry in entries)

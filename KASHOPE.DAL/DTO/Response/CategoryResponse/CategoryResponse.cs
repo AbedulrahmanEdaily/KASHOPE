@@ -13,7 +13,7 @@ namespace KASHOPE.DAL.DTO.Response.CategoryResponse
         public int Id { get; set; }
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public Status Status { get; set; }
-        public string? CreatedBy { get; set; }
+        public string CreatedBy { get; set; }
         public DateTime CreatedAt { get; set; }
         public List<CategoryTranslationResponse> CategoryTranslations { get; set; } = new();
     }
