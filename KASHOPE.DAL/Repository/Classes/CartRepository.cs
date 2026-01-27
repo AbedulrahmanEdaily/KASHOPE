@@ -52,5 +52,9 @@ namespace KASHOPE.DAL.Repository.Classes
             _context.RemoveRange(carts);
             await _context.SaveChangesAsync();
         }
+        public async Task<Cart?> GetCartItem(string userId, int productId)
+        {
+            return await _context.Carts.Include(c => c.Product).Where(c => c.UserId == userId && c.ProductId == productId).FirstOrDefaultAsync();
+        }
     }
 }

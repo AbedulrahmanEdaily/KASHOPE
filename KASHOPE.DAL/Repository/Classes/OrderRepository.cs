@@ -25,9 +25,26 @@ namespace KASHOPE.DAL.Repository.Classes
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Order> GetBySessionIdAsync(string sesssionId)
+        public async Task<Order?> GetBySessionIdAsync(string sesssionId)
         {
             return await _context.Orders.FirstOrDefaultAsync(o => o.SessionId == sesssionId);
+        }
+
+        public async Task<Order?> GetOrderByIdAsync(int id)
+        {
+            return await _context.Orders
+                .Include(o=> o.User)
+                .Include(o=>o.OrderItems)
+                .ThenInclude(o=>o.Product)
+                .FirstOrDefaultAsync(o => o.Id == id) ;
+        }
+
+        public async Task<List<Order>> GetOrderByStatusAsync(OrderStatus status)
+        {
+            return await _context.Orders
+                .Include(o=>o.User)
+                .Where(o => o.OrderStatus == status)
+                .ToListAsync();
         }
 
         public async Task UpdateAsync(Order order)

@@ -18,6 +18,10 @@ namespace KASHOPE.DAL.Models
     {
         Visa=2,Cash=1
     }
+    public enum PaymentStatus
+    {
+        Paid = 2,UnPaid = 1
+    }
     public class Order
     {
         public int Id { get; set; }
@@ -25,10 +29,12 @@ namespace KASHOPE.DAL.Models
         public DateTime OrderDate { get; set; } = DateTime.UtcNow;
         public DateTime? ShippedDate { get; set; }
         public PaymentMethod PaymentMethod { get; set; }
+        public PaymentStatus PaymentStatus { get; set; }
         public string? SessionId { get; set; }
         public string? PaymentId { get; set; }
         public decimal AmountPaid { get; set; }
         public string UserId { get; set; }
         public ApplicationUser User { get; set; }
+        public List<OrderItem> OrderItems { get; set; } = null!;
     }
 }

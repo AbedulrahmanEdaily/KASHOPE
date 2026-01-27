@@ -128,7 +128,8 @@ namespace KASHOPE.BLL.Services.Classes
             {
                 UserId = userId,
                 PaymentMethod = request.PaymentMethod,
-                AmountPaid = totalAmount
+                AmountPaid = totalAmount,
+                PaymentStatus = PaymentStatus.UnPaid
             };
             if (request.PaymentMethod == PaymentMethod.Cash)
             {
@@ -172,6 +173,7 @@ namespace KASHOPE.BLL.Services.Classes
                 var service = new SessionService();
                 var session = service.Create(options);
                 order.SessionId = session.Id;
+                order.PaymentStatus = PaymentStatus.Paid;
                 await _orderRepository.CreateAsync(order);
                 return new CheckoutResponse
                 {

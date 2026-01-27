@@ -2,6 +2,7 @@
 using KASHOPE.DAL.DTO.Request.ProductRequest;
 using KASHOPE.DAL.Models;
 using KASHOPE.PL.Resources;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
@@ -11,6 +12,7 @@ namespace KASHOPE.PL.Area.Admin.Controllers
     [Area("Admin")]
     [Route("api/[Area]/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public class ProductsController : ControllerBase
     {
         private readonly IProductService _productService;

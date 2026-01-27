@@ -10,7 +10,9 @@ namespace KASHOPE.DAL.Repository.Interfaces
     public interface IOrderRepository 
     {
         public Task CreateAsync(Order request);
-        public Task<Order> GetBySessionIdAsync(string sesssionId);
+        public Task<Order?> GetBySessionIdAsync(string sesssionId);
         public Task UpdateAsync(Order order);
+        public Task<List<Order>> GetOrderByStatusAsync(OrderStatus status);
+        public Task<Order?> GetOrderByIdAsync(int id);
     }
 }

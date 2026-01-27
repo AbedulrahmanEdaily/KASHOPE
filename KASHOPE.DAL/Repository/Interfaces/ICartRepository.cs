@@ -14,5 +14,6 @@ namespace KASHOPE.DAL.Repository.Interfaces
         Task UpdateAsync(Cart item);
         Task DeleteAsync(Cart request);
         Task ClearAsync(string userId);
+        Task<Cart?> GetCartItem(string userId, int productId);
     }
 }

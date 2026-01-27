@@ -1,4 +1,5 @@
-﻿using KASHOPE.BLL.Services.Interfaces;
+﻿using Azure.Core;
+using KASHOPE.BLL.Services.Interfaces;
 using KASHOPE.DAL.DTO.Request.CartRequest;
 using KASHOPE.DAL.DTO.Response;
 using KASHOPE.DAL.DTO.Response.CartResponse;
@@ -95,17 +96,7 @@ namespace KASHOPE.BLL.Services.Classes
 
         public async Task<BaseResponse> RemoveFromCartAsync(string userId , int productId)
         {
-            var product = await _productRepository.FindByIdAsync(productId);
-            if (product is null)
-            {
-                return new BaseResponse
-                {
-                    Success = false,
-                    Message = "Product Not Found"
-                };
-            }
-            var itemsInCart = await _cartRepository.GetAllAsync(userId);
-            var itemInCart = itemsInCart.FirstOrDefault(i => i.ProductId == productId);
+            var itemInCart = await _cartRepository.GetCartItem(userId,productId);
             if(itemInCart is null)
             {
                 return new BaseResponse
@@ -114,21 +105,48 @@ namespace KASHOPE.BLL.Services.Classes
                     Message = "Item Not Found"
                 };
             }
-            if(itemInCart.Count > 1)
-            {
-                itemInCart.Count--;
-                await _cartRepository.UpdateAsync(itemInCart);
-                return new BaseResponse
-                {
-                    Success = true,
-                    Message = "Item removed from cart successfully"
-                };
-            }
             await _cartRepository.DeleteAsync(itemInCart);
             return new BaseResponse
             {
                 Success = true,
                 Message = "Item removed from cart successfully"
+            };
+        }
+
+        public async Task<BaseResponse> UpdateQuantityAsync(string userId, int productId , UpdateQuantityRequest request)
+        {
+            if(request.Count <= 0)
+            {
+                return new BaseResponse
+                {
+                    Success = false,
+                    Message = "Count must be greater than zero"
+                };
+            }
+            var itemInCart = await _cartRepository.GetCartItem(userId, productId);
+            if (itemInCart is null || itemInCart.Product is null)
+            {
+                return new BaseResponse
+                {
+                    Success = false,
+                    Message = "Item Not Found"
+                };
+            }
+
+            if (request.Count > itemInCart.Product.Quantity)
+            {
+                return new BaseResponse
+                {
+                    Success = false,
+                    Message = "The quantity is not available in stock"
+                };
+            }
+            itemInCart.Count = request.Count;
+            await _cartRepository.UpdateAsync(itemInCart);
+            return new BaseResponse
+            {
+                Success = true,
+                Message = "Quantity Changed"
             };
         }
     }

@@ -15,5 +15,6 @@ namespace KASHOPE.BLL.Services.Interfaces
         Task<CartSummaryResponse> GetAllProductsFromCart(string userId);
         Task<BaseResponse> RemoveFromCartAsync(string userId , int productId);
         Task<BaseResponse> ClearCartAsync(string userId);
+        Task<BaseResponse> UpdateQuantityAsync(string userId, int productId, UpdateQuantityRequest request);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using KASHOPE.DAL.DTO.Response.CartResponse;
 using KASHOPE.DAL.DTO.Response.CategoryResponse;
+using KASHOPE.DAL.DTO.Response.OrderResponse;
 using KASHOPE.DAL.DTO.Response.ProductResponse;
 using KASHOPE.DAL.Models;
 using Mapster;
@@ -58,6 +59,7 @@ namespace KASHOPE.BLL.Mapster
                 {
                     Image = $"https://localhost:7026/images/{t.Image}"
                 }).ToList());
+            TypeAdapterConfig<Order, OrderResponse>.NewConfig().Map(dest => dest.UserName, src => src.User.UserName);
         }
     }
 }

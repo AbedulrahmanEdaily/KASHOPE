@@ -44,7 +44,7 @@ namespace KASHOPE.PL.Area.User.Controllers
             var result = await _cartService.GetAllProductsFromCart(userId);
             return Ok(new { message = _localizer["Success"].Value, result });
         }
-        [HttpDelete("RemoveFromCart/{ProductId}")]
+        [HttpDelete("{ProductId}")]
         public async Task<IActionResult> DeleteItemFromCart([FromRoute]int ProductId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -62,6 +62,17 @@ namespace KASHOPE.PL.Area.User.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var result = await _cartService.ClearCartAsync(userId);
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
+        [HttpPatch("{productId}")]
+        public async Task<IActionResult> HandelItemQuantity([FromRoute]int productId, [FromBody] UpdateQuantityRequest request)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var result = await _cartService.UpdateQuantityAsync(userId, productId, request);
             if (!result.Success)
             {
                 return BadRequest(result);
