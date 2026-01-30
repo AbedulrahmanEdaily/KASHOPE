@@ -2,6 +2,8 @@
 using KASHOPE.DAL.DTO.Response.CategoryResponse;
 using KASHOPE.DAL.DTO.Response.OrderResponse;
 using KASHOPE.DAL.DTO.Response.ProductResponse;
+using KASHOPE.DAL.DTO.Response.ReviewsResponse;
+using KASHOPE.DAL.DTO.Response.UserResponse;
 using KASHOPE.DAL.Models;
 using Mapster;
 using Microsoft.AspNetCore.Routing.Constraints;
@@ -60,6 +62,7 @@ namespace KASHOPE.BLL.Mapster
                     Image = $"https://localhost:7026/images/{t.Image}"
                 }).ToList());
             TypeAdapterConfig<Order, OrderResponse>.NewConfig().Map(dest => dest.UserName, src => src.User.UserName);
+            TypeAdapterConfig<Review, ReviewResponse>.NewConfig().Map(dest => dest.UserName, src => src.User.UserName);
         }
     }
 }

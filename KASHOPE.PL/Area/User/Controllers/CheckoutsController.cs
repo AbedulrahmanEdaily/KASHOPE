@@ -12,7 +12,7 @@ namespace KASHOPE.PL.Area.User.Controllers
     [Area("User")]
     [Route("api/[Area]/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = "User")]
     public class CheckoutsController : ControllerBase
     {
         private readonly ICheckoutService _checkoutService;

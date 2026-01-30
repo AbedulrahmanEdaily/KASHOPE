@@ -32,8 +32,9 @@ namespace KASHOPE.DAL.Repository.Classes
         {
             return await _context.Products
                 .Include(p => p.ProductTranslations)
-                .Include(p => p.User)
                 .Include(p => p.SubImages)
+                .Include(p => p.Reviews)
+                .ThenInclude(r => r.User)
                 .Include(p => p.Category)
                 .ThenInclude(c => c.CategoryTranslations)
                 .FirstOrDefaultAsync(p=>p.Id == id);

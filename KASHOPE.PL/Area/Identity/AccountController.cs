@@ -25,7 +25,7 @@ namespace KASHOPE.PL.Area.Identity
         [HttpPost("Register")]
         public async Task<IActionResult> Register([FromBody]RegisterRequest request)
         {
-            var result = await _authenticationService.RegisterAsync(request);
+            var result = await _authenticationService.RegisterAsync(request,Request);
             if (!result.Success)
             {
                 return BadRequest(result);

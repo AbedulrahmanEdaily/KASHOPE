@@ -4,6 +4,7 @@ using KASHOPE.DAL.DTO.Response;
 using KASHOPE.DAL.DTO.Response.AccountResponse;
 using KASHOPE.DAL.Models;
 using Mapster;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Configuration;
@@ -98,7 +99,7 @@ namespace KASHOPE.BLL.Services.Classes
             }
         }
 
-        public async Task<BaseResponse> RegisterAsync(RegisterRequest registerRequest)
+        public async Task<BaseResponse> RegisterAsync(RegisterRequest registerRequest,HttpRequest request)
         {
             try
             {
@@ -115,7 +116,7 @@ namespace KASHOPE.BLL.Services.Classes
                 await _userManager.AddToRoleAsync(user, "User");
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 token = Uri.EscapeDataString(token);
-                var url = $"https://localhost:7026/api/auth/account/ConfirmEmail?token={token}&userId={user.Id}"; ;
+                var url = $"{request.Scheme}://{request.Host}/api/auth/account/ConfirmEmail?token={token}&userId={user.Id}"; ;
                 await _emailSender.SendEmailAsync(user.Email, "Welcome to KASHOPE", $"<p>Thank you for registering {user.FullName} Please Confirm Your Email by</p>"+$"<a href='{url}'>Click Here</a>");
                 return new BaseResponse
                 {

@@ -97,10 +97,10 @@ namespace KASHOPE.BLL.Services.Classes
             };
         }
 
-        public async Task<List<ProductDetailsUserResponse>> GetAllProductsDetailsForUserAsync(string lang = "en")
+        public async Task<ProductDetailsUserResponse> GetProductDetailsForUserAsync(int productId , string lang = "en")
         {
-            var products = await _productRepository.GetAllAsync();
-            var response = products.BuildAdapter().AddParameters("lang", lang).AdaptToType<List<ProductDetailsUserResponse>>();
+            var product = await _productRepository.FindByIdAsync(productId);
+            var response = product.BuildAdapter().AddParameters("lang", lang).AdaptToType<ProductDetailsUserResponse>();
             return response;
         }
         public async Task<BaseResponse> DeleteProduct(int id)

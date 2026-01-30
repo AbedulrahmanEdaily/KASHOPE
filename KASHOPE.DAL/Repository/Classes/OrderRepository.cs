@@ -52,5 +52,9 @@ namespace KASHOPE.DAL.Repository.Classes
             _context.Orders.Update(order);
             await _context.SaveChangesAsync();
         }
+        public async Task<bool> HasUserDeliveredOrderForProductAsync(string userId, int productId)
+        {
+            return await _context.Orders.AnyAsync(o => o.UserId == userId && o.OrderItems.Any(oi=>oi.ProductId == productId) && o.OrderStatus == OrderStatus.Delivered);
+        }
     }
 }

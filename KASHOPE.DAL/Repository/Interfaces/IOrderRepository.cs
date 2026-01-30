@@ -14,5 +14,6 @@ namespace KASHOPE.DAL.Repository.Interfaces
         public Task UpdateAsync(Order order);
         public Task<List<Order>> GetOrderByStatusAsync(OrderStatus status);
         public Task<Order?> GetOrderByIdAsync(int id);
+        Task<bool> HasUserDeliveredOrderForProductAsync(string userId, int productId);
     }
 }

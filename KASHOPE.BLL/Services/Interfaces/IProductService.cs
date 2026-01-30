@@ -11,7 +11,7 @@ namespace KASHOPE.BLL.Services.Interfaces
     {
         Task<List<ProductResponse>> GetAllProductsAsync();
         Task<PagintedResponse<ProductUserResponse>> GetAllProductsForUserAsync(string lang = "en", int limit = 3, int page = 1, string? search = null, int? categoryId = null, decimal? MinPrice = null, decimal? MaxPrice = null , string? sortby = null, bool asc = true);
-        Task<List<ProductDetailsUserResponse>> GetAllProductsDetailsForUserAsync(string lang);
+        Task<ProductDetailsUserResponse> GetProductDetailsForUserAsync(int productId, string lang = "en");
         Task CreateAsync(ProductRequest request);
         Task<BaseResponse> DeleteProduct(int id);
     }

@@ -18,5 +18,6 @@ namespace KASHOPE.DAL.Models
         public Category Category { get; set; }
         public List<ProductTranslation> ProductTranslations { get; set; }
         public List<ProductImage?> SubImages { get; set; }
+        public List<Review> Reviews { get; set; }
     }
 }

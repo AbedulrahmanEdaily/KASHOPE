@@ -1,4 +1,5 @@
-﻿using System;
+﻿using KASHOPE.DAL.DTO.Response.ReviewsResponse;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,5 +18,6 @@ namespace KASHOPE.DAL.DTO.Response.ProductResponse
         public string? MainImage { get; set; }
         public string Category { get; set; }
         public List<ProductImageResponse> SubImages { get; set; }
+        public List<ReviewResponse> Reviews { get; set; }
     }
 }
