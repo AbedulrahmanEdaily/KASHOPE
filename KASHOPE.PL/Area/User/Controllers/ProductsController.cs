@@ -30,13 +30,13 @@ namespace KASHOPE.PL.Area.User.Controllers
         [HttpGet()]
         public async Task<IActionResult> Index([FromQuery] string? search = null, [FromQuery] string lang = "en", [FromQuery] int page = 1, [FromQuery] int limit = 3, [FromQuery] int? categoryId = null , [FromQuery] decimal? MinPrice = null, [FromQuery] decimal? MaxPrice = null , [FromQuery] string? sortby = null, [FromQuery] bool asc = true)
         {
-            var results = await _productService.GetAllProductsForUserAsync(lang , limit , page , search , categoryId , MinPrice , MaxPrice , sortby , asc);
+            var results = await _productService.GetAllProductsForUserAsync(Request , lang , limit , page , search , categoryId , MinPrice , MaxPrice , sortby , asc);
             return Ok(new { message = _localizer["Success"].Value, results });
         }
         [HttpGet("Details/{productId}")]
         public async Task<IActionResult> GetAllProductsDetailsForUser([FromRoute] int productId,[FromQuery] string lang = "en")
         {
-            var results = await _productService.GetProductDetailsForUserAsync(productId,lang);
+            var results = await _productService.GetProductDetailsForUserAsync(Request ,productId,lang);
             return Ok(new { message = _localizer["Success"].Value, results });
         }
         [HttpPost("{proudctId}/Review")]

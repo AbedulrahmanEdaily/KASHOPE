@@ -25,7 +25,7 @@ namespace KASHOPE.PL.Area.User.Controllers
         public async Task<IActionResult> Payment([FromBody] CheckoutRequest request)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var result = await _checkoutService.ProcessPaymentAsync(request, userId);
+            var result = await _checkoutService.ProcessPaymentAsync(request, userId , Request);
             if (!result.Success)
             {
                 return BadRequest(result);

@@ -26,7 +26,7 @@ namespace KASHOPE.PL.Area.Admin.Controllers
         [HttpGet()]
         public async Task<IActionResult> GetAll()
         {
-            var products = await _productService.GetAllProductsAsync();
+            var products = await _productService.GetAllProductsAsync(Request);
             return Ok(products);
         }
         [HttpPost()]

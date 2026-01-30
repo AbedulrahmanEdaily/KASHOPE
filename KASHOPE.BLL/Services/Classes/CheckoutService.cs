@@ -4,6 +4,7 @@ using KASHOPE.DAL.DTO.Request;
 using KASHOPE.DAL.DTO.Response;
 using KASHOPE.DAL.Models;
 using KASHOPE.DAL.Repository.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Stripe.Checkout;
@@ -100,7 +101,7 @@ namespace KASHOPE.BLL.Services.Classes
            
         }
 
-        public async Task<CheckoutResponse> ProcessPaymentAsync(CheckoutRequest request,string userId)
+        public async Task<CheckoutResponse> ProcessPaymentAsync(CheckoutRequest request,string userId , HttpRequest httpRequest)
         {
             var cartItems = await _cartRepository.GetAllAsync(userId);
             if (!cartItems.Any())
@@ -146,8 +147,8 @@ namespace KASHOPE.BLL.Services.Classes
                     PaymentMethodTypes = new List<string> { "card" },
                     LineItems = new List<SessionLineItemOptions>(),
                     Mode = "payment",
-                    SuccessUrl = $"https://localhost:7026/api/User/checkouts/success?session_Id={{CHECKOUT_SESSION_ID}}",
-                    CancelUrl = $"https://localhost:7026/api/checkouts/cancel",
+                    SuccessUrl = $"{httpRequest.Scheme}://{httpRequest.Host}/api/User/checkouts/success?session_Id={{CHECKOUT_SESSION_ID}}",
+                    CancelUrl = $"{httpRequest.Scheme}://{httpRequest.Host}/api/checkouts/cancel",
                     Metadata = new Dictionary<string, string>
                     {
                         {"userId", userId }

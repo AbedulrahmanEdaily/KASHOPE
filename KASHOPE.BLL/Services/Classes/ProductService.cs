@@ -42,13 +42,13 @@ namespace KASHOPE.BLL.Services.Classes
             var result = await _productRepository.CreateAsync(product);
         }
 
-        public async Task<List<ProductResponse>> GetAllProductsAsync()
+        public async Task<List<ProductResponse>> GetAllProductsAsync(HttpRequest request)
         {
             var products = await _productRepository.GetAllAsync();
-            return products.Adapt<List<ProductResponse>>();
+            return products.BuildAdapter().AddParameters("Scheme", request.Scheme).AddParameters("Host", request.Host).AdaptToType<List<ProductResponse>>();
         }
 
-        public async Task<PagintedResponse<ProductUserResponse>> GetAllProductsForUserAsync(string lang = "en",int limit = 3 , int page = 1 , string? search = null , int? categoryId = null , decimal? MinPrice = null , decimal? MaxPrice = null , string? sortby = null , bool asc = true)
+        public async Task<PagintedResponse<ProductUserResponse>> GetAllProductsForUserAsync(HttpRequest request , string lang = "en",int limit = 3 , int page = 1 , string? search = null , int? categoryId = null , decimal? MinPrice = null , decimal? MaxPrice = null , string? sortby = null , bool asc = true)
         {
             var query =  _productRepository.Query();
             if(search is not null)
@@ -87,7 +87,7 @@ namespace KASHOPE.BLL.Services.Classes
             }
             var totalCount = await query.CountAsync();
             var products = await query.Skip((page - 1) * limit).Take(limit).ToListAsync();
-            var response= products.BuildAdapter().AddParameters("lang",lang).AdaptToType<List<ProductUserResponse>>();
+            var response= products.BuildAdapter().AddParameters("lang",lang).AddParameters("Scheme", request.Scheme).AddParameters("Host", request.Host).AdaptToType<List<ProductUserResponse>>();
             return new PagintedResponse<ProductUserResponse>
             {
                 TotalCount = totalCount,
@@ -97,10 +97,10 @@ namespace KASHOPE.BLL.Services.Classes
             };
         }
 
-        public async Task<ProductDetailsUserResponse> GetProductDetailsForUserAsync(int productId , string lang = "en")
+        public async Task<ProductDetailsUserResponse> GetProductDetailsForUserAsync(HttpRequest request, int productId , string lang = "en")
         {
             var product = await _productRepository.FindByIdAsync(productId);
-            var response = product.BuildAdapter().AddParameters("lang", lang).AdaptToType<ProductDetailsUserResponse>();
+            var response = product.BuildAdapter().AddParameters("lang", lang).AddParameters("Scheme",request.Scheme).AddParameters("Host" , request.Host).AdaptToType<ProductDetailsUserResponse>();
             return response;
         }
         public async Task<BaseResponse> DeleteProduct(int id)
