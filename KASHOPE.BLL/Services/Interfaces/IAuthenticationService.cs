@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace KASHOPE.BLL.Services.Interfaces
 {
-    public interface IAuthenticationService
+    public interface IAuthenticationService : IScopedService
     {
         Task<BaseResponse> RegisterAsync(RegisterRequest registerRequest, HttpRequest request);
         Task<BaseResponse> LoginAsync(LoginRequest loginRequest);

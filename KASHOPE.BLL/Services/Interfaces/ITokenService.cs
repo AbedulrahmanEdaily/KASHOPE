@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace KASHOPE.BLL.Services.Interfaces
 {
-    public interface ITokenService
+    public interface ITokenService : IScopedService
     {
         Task<string> GenerateJwtToken(ApplicationUser user);
         Task<string> GenerateRefreshToken();

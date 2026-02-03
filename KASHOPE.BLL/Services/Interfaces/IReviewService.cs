@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace KASHOPE.BLL.Services.Interfaces
 {
-    public interface IReviewService
+    public interface IReviewService : IScopedService
     {
         Task<BaseResponse> AddReviewAsync(string userId, int productId, ReviewRequest request);
     }

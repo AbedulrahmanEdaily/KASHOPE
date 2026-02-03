@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace KASHOPE.BLL.Services.Interfaces
 {
-    public interface ICartService
+    public interface ICartService : IScopedService
     {
         Task<BaseResponse> AddToCartAsync(string userId, AddToCartRequest request);
         Task<CartSummaryResponse> GetAllProductsFromCart(string userId);

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace KASHOPE.DAL.Repository.Interfaces
 {
-    public interface IOrderRepository 
+    public interface IOrderRepository : IScopedRepository
     {
         public Task CreateAsync(Order request);
         public Task<Order?> GetBySessionIdAsync(string sesssionId);

@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace KASHOPE.BLL.Services.Interfaces
 {
-    public interface IProductService
+    public interface IProductService : IScopedService
     {
         Task<List<ProductResponse>> GetAllProductsAsync(HttpRequest request);
         Task<PagintedResponse<ProductUserResponse>> GetAllProductsForUserAsync(HttpRequest request, string lang = "en", int limit = 3, int page = 1, string? search = null, int? categoryId = null, decimal? MinPrice = null, decimal? MaxPrice = null , string? sortby = null, bool asc = true);

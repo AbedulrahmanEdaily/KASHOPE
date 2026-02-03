@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace KASHOPE.BLL.Services.Interfaces
 {
-    public interface IFileService
+    public interface IFileService : IScopedService
     {
         Task<string> UploadAsync(IFormFile file);
         Task<List<ProductImageResponse>?> UploadAsync(List<IFormFile> files);

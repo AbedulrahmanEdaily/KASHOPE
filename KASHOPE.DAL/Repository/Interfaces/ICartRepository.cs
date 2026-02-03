@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace KASHOPE.DAL.Repository.Interfaces
 {
-    public interface ICartRepository
+    public interface ICartRepository : IScopedRepository
     {
         Task<List<Cart>> GetAllAsync(string userId);
         Task CreateAsync(Cart request);

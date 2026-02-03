@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace KASHOPE.BLL.Services.Interfaces
 {
-    public interface ICheckoutService
+    public interface ICheckoutService : IScopedService
     {
         Task<CheckoutResponse> ProcessPaymentAsync(CheckoutRequest request , string userId , HttpRequest httpRequest);
         Task<CheckoutResponse> HandlePaymentAsync(string sessionId);

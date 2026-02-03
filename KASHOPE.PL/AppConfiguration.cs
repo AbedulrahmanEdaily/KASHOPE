@@ -11,26 +11,11 @@ namespace KASHOPE.PL
     {
         public static void Configuration(IServiceCollection services)
         {
-            services.AddScoped<ICategoryRepository, CategoryRepository>();
-            services.AddScoped<ICategoryService, CategoryService>();
-            services.AddScoped<IAuthenticationService, AuthenticationService>();
-            services.AddScoped<ISeedData, RoleSeedData>();
-            services.AddScoped<ISeedData, UserSeedData>();
             services.AddTransient<IEmailSender, EmailSender>();
-            services.AddTransient<IFileService, FileService>();
-            services.AddTransient<IProductRepository, ProductRepository>();
-            services.AddTransient<IProductService, ProductService>();
-            services.AddTransient<ITokenService, TokenService>();
-            services.AddTransient<ICartRepository, CartRepository>();
-            services.AddTransient<ICartService, CartService>();
-            services.AddTransient<ICheckoutService, CheckoutService>();
-            services.AddTransient<IOrderService, OrderService>();
-            services.AddTransient<IOrderRepository, OrderRepository>();
-            services.AddTransient<IOrderItemRepository, OrderItemRepository>();
-            services.AddTransient<IReviewRepository, ReviewRepository>();
-            services.AddTransient<IReviewService, ReviewService>();
-            services.AddTransient<IManageUsersService, ManageUsersService>();
-            services.AddExceptionHandler<GlobalExceptionHandler>();
+            var assemblyService = typeof(CategoryService).Assembly;
+            var assemblyRepository = typeof(CategoryRepository).Assembly;
+            services.Scan(s => s.FromAssemblies(assemblyService).AddClasses(c => c.AssignableTo<IScopedService>()).AsImplementedInterfaces().WithScopedLifetime());
+            services.Scan(s => s.FromAssemblies(assemblyRepository).AddClasses(c => c.AssignableTo<IScopedRepository > ()).AsImplementedInterfaces().WithScopedLifetime());
             services.AddProblemDetails();
         }
     }

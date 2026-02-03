@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace KASHOPE.DAL.Repository.Interfaces
 {
-    public interface ICategoryRepository:IGenericRepository<Category>
+    public interface ICategoryRepository:IGenericRepository<Category>, IScopedRepository
     {
     }
 }

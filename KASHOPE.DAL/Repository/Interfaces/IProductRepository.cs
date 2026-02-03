@@ -3,7 +3,7 @@
 
 namespace KASHOPE.DAL.Repository.Interfaces
 {
-    public interface IProductRepository:IGenericRepository<Product>
+    public interface IProductRepository:IGenericRepository<Product>,IScopedRepository
     {
         Task<List<Product>> GetAllAsync();
         Task<Product?> FindByIdAsync(int id);

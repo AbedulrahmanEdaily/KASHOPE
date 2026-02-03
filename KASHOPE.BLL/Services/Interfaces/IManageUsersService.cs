@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace KASHOPE.BLL.Services.Interfaces
 {
-    public interface IManageUsersService
+    public interface IManageUsersService : IScopedService
     {
         Task<List<UserRespnose>> GetUsersAsync();
         Task<UserDetailsResponse> GetUserDetailsAsync();

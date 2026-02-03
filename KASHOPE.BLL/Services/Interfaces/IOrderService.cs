@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace KASHOPE.BLL.Services.Interfaces
 {
-    public interface IOrderService
+    public interface IOrderService : IScopedService
     {
         Task<List<OrderResponse>> GetOrdersByStatusAsync(OrderStatus status);
         Task<BaseResponse> UpdateOrderStatus(int orderId, OrderStatus newOrderStatus);

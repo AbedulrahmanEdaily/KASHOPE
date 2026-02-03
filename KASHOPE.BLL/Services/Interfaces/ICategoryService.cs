@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace KASHOPE.BLL.Services.Interfaces
 {
-    public interface ICategoryService
+    public interface ICategoryService : IScopedService
     {
         public Task<CategoryResponse> CreateCategoryAsync(CategoryRequest request);
         public Task<List<CategoryResponse>> GetAllCategoriesAsync();

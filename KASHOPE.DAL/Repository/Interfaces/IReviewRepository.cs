@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace KASHOPE.DAL.Repository.Interfaces
 {
-    public interface IReviewRepository
+    public interface IReviewRepository : IScopedRepository
     {
         Task<bool> HasUserReviewProductAsync(string userId , int productId);
         Task CreateReviewAsync(Review request);

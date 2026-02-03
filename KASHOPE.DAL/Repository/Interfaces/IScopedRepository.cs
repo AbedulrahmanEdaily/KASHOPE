@@ -1,5 +1,4 @@
-﻿using KASHOPE.DAL.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace KASHOPE.DAL.Repository.Interfaces
 {
-    public interface IOrderItemRepository : IScopedRepository
+    public interface IScopedRepository
     {
-        Task CreateAsync(List<OrderItem> request); 
     }
 }
